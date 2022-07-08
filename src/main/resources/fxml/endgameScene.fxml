@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane prefHeight="900" prefWidth="1400" stylesheets="@../css/setupStyle.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.guiControllers.EndgameController">
+<center>
+    <AnchorPane id="background" fx:id="loginPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" stylesheets="@../css/setupStyle.css" BorderPane.alignment="CENTER">
+        <children>
+            <ImageView fx:id="image" fitHeight="100.0" fitWidth="100.0" layoutX="411.0" layoutY="250.0" preserveRatio="true"/>
+            <Label fx:id="message" layoutX="0.0" layoutY="400" prefWidth="900" styleClass="text" text="You win!" textAlignment="CENTER" />
+            <Label fx:id="winners" layoutX="0.0" layoutY="450" prefWidth="900" styleClass="text" text="You are the master of Eriantys world" textAlignment="CENTER" />
+        </children>
+    </AnchorPane>
+</center>
+</BorderPane>

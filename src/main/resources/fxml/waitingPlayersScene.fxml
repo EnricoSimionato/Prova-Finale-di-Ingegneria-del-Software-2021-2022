@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="900" prefWidth="1400" stylesheets="@../css/setupStyle.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.guiControllers.WaitingController">
+    <center>
+        <AnchorPane id="background" fx:id="loginPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" stylesheets="@../css/setupStyle.css" BorderPane.alignment="CENTER">
+            <children>
+                <Label fx:id="nicknameMessage" alignment="CENTER" layoutY="245.0" prefHeight="30.0" prefWidth="600.0" text=" Waiting for other players">
+               <font>
+                  <Font size="14.0" />
+               </font></Label>
+                <ImageView fitHeight="400.0" fitWidth="600.0" layoutX="43.0" layoutY="-20.0" preserveRatio="true">
+                    <image>
+                        <Image url="@../images/scrittaEriantys.png" />
+                    </image>
+                </ImageView>
+            </children>
+        </AnchorPane>
+    </center>
+</BorderPane>

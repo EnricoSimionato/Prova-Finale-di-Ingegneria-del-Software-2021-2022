@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            stylesheets="@../css/setupStyle.css"
+            fx:controller="it.polimi.ingsw.client.gui.guiControllers.TerminatorController"
+            prefHeight="400.0" prefWidth="1000.0">
+    <center>
+        <Label text="A player has been disconnected. The match is over" styleClass="text"/>
+    </center>
+</BorderPane>
