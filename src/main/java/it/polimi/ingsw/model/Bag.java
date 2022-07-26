@@ -25,23 +25,28 @@ public class Bag implements Serializable {
     }
 
     /**
-     * Draws a certain amount of students from the bag so the bag removes the students from itself and returns them to the caller.
-     * The method doesn't throw an EmptyBagException because it is assumed that it is called just one time at the beginning, with a low numberOfStudents value
+     * Draws a certain amount of students from the bag so the bag removes the students from itself and returns them
      * @param numberOfStudents number of students to draw
      * @param color color of the students that has to be drawn
      * @return list of students required
+     * @throws EmptyBagException if the bag doesn't contain the required amount of students
      */
-    public List<Student> drawStudentsByColor(int numberOfStudents, PawnColor color) {
-        List<Student> returnStudents = new ArrayList<>();
+    public List<Student> drawStudentsByColor(int numberOfStudents, PawnColor color) throws EmptyBagException {
+        List<Student> drawnStudents = new ArrayList<>();
+        if (numberOfStudents > students.size()) {
+            drawnStudents.addAll(students);
+            students.removeAll(students);
+            throw new EmptyBagException(drawnStudents);
+        }
         for (int i = 0; i < numberOfStudents; i++) {
             for (int j = 0; j < students.size(); j++) {
                 if (students.get(j).getColor() == color) {
-                    returnStudents.add(students.remove(j));
+                    drawnStudents.add(students.remove(j));
                     break;
                 }
             }
         }
-        return returnStudents;
+        return drawnStudents;
     }
 
     /**
@@ -53,10 +58,9 @@ public class Bag implements Serializable {
     public List<Student> drawStudents(int numberOfStudents) throws EmptyBagException {
         List<Student> drawnStudents = new ArrayList<>();
         if (numberOfStudents > students.size()) {
-            List<Student> returnedStudents = new ArrayList<>();
-            returnedStudents.addAll(students);
+            drawnStudents.addAll(students);
             students.removeAll(students);
-            throw new EmptyBagException(returnedStudents);
+            throw new EmptyBagException(drawnStudents);
         }
         for (int i = 0; i < numberOfStudents; i++) {
             int index = new Random().nextInt(students.size());

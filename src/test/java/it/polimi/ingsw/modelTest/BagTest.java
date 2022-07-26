@@ -48,7 +48,7 @@ public class BagTest {
     }
 
     @Test
-    public void testDrawStudentsByColor() {
+    public void testDrawStudentsByColor() throws EmptyBagException {
         assertEquals(bag.drawStudentsByColor(1, PawnColor.YELLOW).get(0).getColor(), PawnColor.YELLOW);
         assertEquals(bag.drawStudentsByColor(5, PawnColor.RED).size(), 5);
         for (Student s : bag.drawStudentsByColor(3, PawnColor.BLUE)) assertEquals(s.getColor(), PawnColor.BLUE);

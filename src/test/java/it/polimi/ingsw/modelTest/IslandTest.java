@@ -2,6 +2,7 @@ package it.polimi.ingsw.modelTest;
 
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.exception.EmptyBagException;
+import it.polimi.ingsw.model.exception.InconsistentStateException;
 import it.polimi.ingsw.model.exception.InvalidIndexException;
 import it.polimi.ingsw.model.exception.IslandAlreadyForbiddenException;
 import org.junit.Test;
@@ -48,12 +49,6 @@ public class IslandTest {
     }
 
     @Test
-    public void testIsland(){
-        Island i = new Island();
-        assertNotNull(i);
-    }
-
-    @Test
     public void testGetTowers() {
         List<Tower> t = new ArrayList<>() ;
         t.add(new Tower(TowerColor.BLACK));
@@ -72,7 +67,7 @@ public class IslandTest {
     }
 
     @Test
-    public void testAddStudents() throws EmptyBagException, InvalidIndexException {
+    public void testAddStudents() throws EmptyBagException, InvalidIndexException, InconsistentStateException {
         for(int i = 0; i < 3; i++){
             island.addStudents(bag.drawStudents(1).get(0), island.getIndex().get(0));
             assertNotNull(island.getStudents());
@@ -81,7 +76,7 @@ public class IslandTest {
     }
 
     @Test
-    public void testGetStudents() throws EmptyBagException, InvalidIndexException {
+    public void testGetStudents() throws EmptyBagException, InconsistentStateException {
         for(int i = 0; i < 3; i++){
             Student s = bag.drawStudents(1).get(0);
             island.addStudents(s, island.getIndex().get(0));
@@ -93,6 +88,6 @@ public class IslandTest {
 
     @Test
     public void testGetAggregation() {
-        assertEquals(1, island.getAggregation());
+        assertEquals(1, island.getAggregationDimension());
     }
 }

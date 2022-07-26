@@ -20,7 +20,7 @@ public class ExpertGame extends Game {
      * @param numberOfPlayers number of players that will play the match
      * @param nicknames nicknames of the players in the match
      */
-    public ExpertGame(int numberOfPlayers, List<String> nicknames) {
+    public ExpertGame(int numberOfPlayers, List<String> nicknames) throws ImpossibleToStartTheMatchException{
         super(numberOfPlayers, nicknames);
         gameMode = GameMode.EXPERT;
         game = new Game(numberOfPlayers, nicknames);

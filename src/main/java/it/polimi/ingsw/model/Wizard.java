@@ -1,61 +1,95 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.exception.InvalidIndexException;
+import it.polimi.ingsw.model.exception.InvalidStringException;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 public enum Wizard implements Serializable {
     GREEN_WIZARD(0, "Green"), YELLOW_WIZARD(1, "Yellow"), PURPLE_WIZARD(2, "Purple"), BLUE_WIZARD(3, "Blue");
     private final int index;
-    private final String printedValue;
+    private final String color;
 
-    Wizard(int index, String printedValue) {
+    /**
+     * Creates a value of the enumeration
+     * @param index index associated to the wizard
+     * @param color color of the wizard
+     */
+    Wizard(int index, String color) {
         this.index = index;
-        this.printedValue = printedValue;
+        this.color = color;
     }
 
+    /**
+     * Returns the index of the wizard in the enumeration
+     * @return the index of the wizard in the enumeration
+     */
     public int getIndex() { return index; }
 
+    /**
+     * Returns the wizard which has the index equals to the received one
+     * @param index index of the wizard which is looked for
+     * @throws InvalidIndexException if there is no wizard which as the required index associated
+     */
     public static Wizard associateIndexToWizard(int index) throws InvalidIndexException {
-        Wizard w = null;
+        Wizard wizard = null;
 
-        if (index<0 || index>4)
+        if (index < 0 || index > 4)
             throw new InvalidIndexException("There is no such wizard");
 
         switch (index) {
             case 0:
-                w = Wizard.GREEN_WIZARD;
+                wizard = Wizard.GREEN_WIZARD;
                 break;
             case 1:
-                w = Wizard.YELLOW_WIZARD;
+                wizard = Wizard.YELLOW_WIZARD;
                 break;
             case 2:
-                w = Wizard.PURPLE_WIZARD;
+                wizard = Wizard.PURPLE_WIZARD;
                 break;
             case 3:
-                w = Wizard.BLUE_WIZARD;
+                wizard = Wizard.BLUE_WIZARD;
                 break;
         }
-
-        return w;
+        return wizard;
     }
 
+    /**
+     * Returns a lexicographical way to represent the wizard
+     * @return color of the wizard
+     */
     @Override
     public String toString() {
-        return printedValue;
+        return color;
     }
 
-    public static Wizard getWizardFromString(String wizard) {
+    /**
+     * Returns the wizard which has the color equals to the received one (colors : "Green", "Yellow", "Purple", "Blue")
+     * @param wizard color of the wizard which is looked for
+     * @throws InvalidIndexException if there is no wizard which as the required index associated
+     */
+    public static Wizard getWizardFromString(String wizard) throws InvalidStringException {
+        if (!"Green".equals(wizard) && !"Yellow".equals(wizard) && !"Purple".equals(wizard) && !"Blue".equals(wizard)) throw new InvalidStringException("There is no such wizard");
+
+        Wizard returnedWizard = null;
         switch (wizard) {
             case "Green":
-                return Wizard.GREEN_WIZARD;
+                returnedWizard = Wizard.GREEN_WIZARD;
+                break;
             case "Yellow":
-                return Wizard.YELLOW_WIZARD;
+                returnedWizard = Wizard.YELLOW_WIZARD;
+                break;
             case "Purple":
-                return Wizard.PURPLE_WIZARD;
+                returnedWizard = Wizard.PURPLE_WIZARD;
+                break;
             case "Blue":
-                return Wizard.BLUE_WIZARD;
+                returnedWizard = Wizard.BLUE_WIZARD;
+                break;
         }
-        return null;
+        return returnedWizard;
     }
 }

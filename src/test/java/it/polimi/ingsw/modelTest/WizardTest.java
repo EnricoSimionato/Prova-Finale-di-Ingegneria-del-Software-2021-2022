@@ -28,7 +28,7 @@ public class WizardTest {
     }
 
     @Test
-    public void testGetWizardFromString() {
+    public void testGetWizardFromString() throws InvalidStringException {
         for (int i=0; i < Wizard.values().length; i++)
             assertEquals(Wizard.getWizardFromString(Wizard.values()[i].toString()), Wizard.values()[i]);
     }

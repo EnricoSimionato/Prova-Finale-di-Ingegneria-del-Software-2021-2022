@@ -33,7 +33,6 @@ public class ClientCli {
     public ClientCli(String ip, int port) {
         this.ip = ip;
         this.port = port;
-        printLogo();
     }
 
     /**
@@ -205,10 +204,19 @@ public class ClientCli {
      */
     public void run() throws IOException {
         Socket socket = new Socket(ip, port);
-        System.out.println("Connection established");
+        Scanner stdin = new Scanner(System.in);
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+        printLogo();
+        String input = stdin.nextLine();
+        while (input.equals("\n")) {
+            System.out.println("Press Enter to continue...");
+            input = stdin.nextLine();
+        }
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
         ObjectOutputStream socketOut = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream socketIn = new ObjectInputStream(socket.getInputStream());
-        Scanner stdin = new Scanner(System.in);
 
         try{
             Thread t0 = asyncReadFromSocket(socketIn);

@@ -3,10 +3,8 @@ import it.polimi.ingsw.model.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import it.polimi.ingsw.model.exception.EmptyBagException;
-import it.polimi.ingsw.model.exception.EmptyCloudException;
-import it.polimi.ingsw.model.exception.InvalidIndexException;
-import it.polimi.ingsw.model.exception.NoMoreTowersException;
+import it.polimi.ingsw.model.exception.*;
+import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -14,18 +12,30 @@ public class GameTest {
 
     private Bag bag = new Bag();
     private SchoolBoard[] schoolBoards = new SchoolBoard[] { new SchoolBoard(9, TowerColor.WHITE, 8), new SchoolBoard(9, TowerColor.BLACK, 8)};
-    private GameTable gameTable = new GameTable(2, schoolBoards,  bag);
     private Player[] players = {new Player("player0", 0,  new ArrayList<Assistant>()), new Player("player1", 1,  new ArrayList<Assistant>())};
     private String[] nicknames = {players[0].getNickname(), players[1].getNickname()};
-    private Game game2p = new Game(2, Arrays.stream(nicknames).collect(Collectors.toList()));
+    private Game game2p;
 
+    private GameTable gameTable;
+
+    @Before
+    public void initialize() {
+        try {
+            game2p = new Game(2, Arrays.stream(nicknames).collect(Collectors.toList()));
+            gameTable = new GameTable(2, schoolBoards,  bag);
+        } catch (EmptyBagException e) {
+            System.out.println(e.getMessage());
+        } catch (ImpossibleToStartTheMatchException e) {
+            throw new RuntimeException(e);
+        }
+    }
     @Test
     public void testGetGameMode() {
         assertEquals(GameMode.NORMAL,game2p.getGameMode());
     }
 
     @Test
-    public void testCreateGameTable() {
+    public void testCreateGameTable() throws ImpossibleToStartTheMatchException {
 
         //SchoolBoard[] expectedSchoolBoards= new SchoolBoard[]{new SchoolBoard(7, TowerColor.WHITE, 8), new SchoolBoard(7, TowerColor.BLACK, 8)};
         Game g = new Game(2);

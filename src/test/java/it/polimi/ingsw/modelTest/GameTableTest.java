@@ -3,13 +3,23 @@ import it.polimi.ingsw.model.*;
 import java.util.*;
 
 import it.polimi.ingsw.model.exception.*;
+import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class GameTableTest {
 
     private SchoolBoard[] schoolBoards = new SchoolBoard[] { new SchoolBoard(9, TowerColor.BLACK, 8), new SchoolBoard(9, TowerColor.WHITE, 8)};
-    private GameTable gameTable = new GameTable(2,schoolBoards, new Bag());
+    private GameTable gameTable;
+
+    @Before
+    public void initialize() {
+        try {
+            gameTable = new GameTable(2,schoolBoards, new Bag());
+        } catch (EmptyBagException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
     @Test
     public void testCreateIslands(){
@@ -25,10 +35,9 @@ public class GameTableTest {
     }
 
     @Test
-    public void testAddStudentsOnIslandOnStart() {
+    public void testAddStudentsOnIslandOnStart() throws EmptyBagException {
         SchoolBoard[] schoolBoards = new SchoolBoard[] { new SchoolBoard(9, TowerColor.BLACK, 8), new SchoolBoard(9, TowerColor.WHITE, 8)};
         GameTable g = new GameTable(2, schoolBoards, new Bag());
-
         for (int i = 0; i < 12; i++) {
             if (i != g.getMotherNaturePosition() && i != (g.getMotherNaturePosition()+6)%12) assertEquals(g.getIslands().get(i).getStudents().size(), 1);
             else assertEquals(g.getIslands().get(i).getStudents().size(), 0);
@@ -199,14 +208,14 @@ public class GameTableTest {
     }
 
     @Test
-    public void testMergeIslandsIfNecessary() throws InvalidIndexException {
+    public void testMergeIslandsIfNecessary() throws InvalidIndexException, InconsistentStateException {
         List<Tower> towers = new ArrayList<>();
         towers.add(new Tower(TowerColor.BLACK));
         gameTable.getIslands().get(0).setTowers(towers);
         gameTable.getIslands().get(1).setTowers(towers);
         gameTable.changeMotherNaturePosition(0);
         gameTable.mergeIslandsIfNecessary();
-        assertEquals(2, gameTable.getIslands().get(0).getAggregation());
+        assertEquals(2, gameTable.getIslands().get(0).getAggregationDimension());
     }
 
     @Test

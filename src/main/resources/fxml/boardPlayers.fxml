@@ -8,9 +8,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane prefHeight="900" prefWidth="1600" styleClass="background" stylesheets="@../css/boardStyle.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.guiControllers.BoardController">
+<BorderPane fx:id="externalBordePane" prefHeight="1080" prefWidth="1920" styleClass="background" stylesheets="@../css/boardStyle.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.guiControllers.BoardController">
    <right>
-      <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="655.0" prefWidth="258.0" BorderPane.alignment="CENTER">
+      <AnchorPane fx:id="mySchoolboardPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="655.0" prefWidth="258.0" BorderPane.alignment="CENTER">
          <children>
             <ImageView fx:id="myBoard" fitHeight="600.0" fitWidth="258.0" layoutY="55.0" styleClass="boards">
                <image>

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.gui.guiControllers;
 
+import it.polimi.ingsw.client.gui.ScaledResizingList;
 import it.polimi.ingsw.controller.message.*;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.exception.InvalidIndexException;
@@ -19,6 +20,8 @@ import javafx.scene.image.ImageView;
 
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 
 import java.io.IOException;
@@ -28,6 +31,9 @@ import java.util.*;
 
 public class BoardController extends GuiController {
 
+    @FXML BorderPane externalBordePane;
+    @FXML AnchorPane mySchoolBoardPane;
+    @FXML ImageView myBoard;
     @FXML ImageView enemyProfessor0; @FXML ImageView enemyProfessor1; @FXML ImageView enemyProfessor2; @FXML ImageView enemyProfessor3; @FXML ImageView enemyProfessor4;
     @FXML ImageView enemyEntrance0; @FXML ImageView enemyEntrance1; @FXML ImageView enemyEntrance2; @FXML ImageView enemyEntrance3; @FXML ImageView enemyEntrance4; @FXML ImageView enemyEntrance5; @FXML ImageView enemyEntrance6; @FXML ImageView enemyEntrance7; @FXML ImageView enemyEntrance8;
     @FXML ImageView enemyStudent00; @FXML ImageView enemyStudent01; @FXML ImageView enemyStudent02; @FXML ImageView enemyStudent03; @FXML ImageView enemyStudent04; @FXML ImageView enemyStudent05; @FXML ImageView enemyStudent06; @FXML ImageView enemyStudent07; @FXML ImageView enemyStudent08; @FXML ImageView enemyStudent09;
@@ -123,6 +129,8 @@ public class BoardController extends GuiController {
     private int indexLastCharacterPlayed;
     private boolean toInitialize = true;
     List<String> visibleIslands = new ArrayList<>();
+
+    private ScaledResizingList scaledResizingList;
 
     /**
      * Returns the board sent by the server
@@ -225,6 +233,16 @@ public class BoardController extends GuiController {
         indexLastCharacterPlayed = 0;
         enemyBoardDisplayed = 1;
         studentMoved = -1;
+
+        /*scaledResizingList = new ScaledResizingList();
+        scaledResizingList.addItem(externalBordePane, mySchoolBoardPane, 258.0/1920.0, 600.0/1080.0, 0, 240.0/1080.0);
+        scaledResizingList.addItem(mySchoolBoardPane, myBoard, 600/655, 1, 0, 55/655);
+        getStage().widthProperty().addListener((observable, oldValue, newValue) -> {
+            scaledResizingList.resize();
+        });
+        getStage().heightProperty().addListener((observable, oldValue, newValue) -> {
+            scaledResizingList.resize();
+        });*/
     }
 
     /**

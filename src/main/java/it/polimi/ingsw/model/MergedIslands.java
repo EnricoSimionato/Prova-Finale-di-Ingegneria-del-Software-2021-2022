@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.exception.InconsistentStateException;
 import it.polimi.ingsw.model.exception.InvalidIndexException;
 import it.polimi.ingsw.model.exception.IslandAlreadyForbiddenException;
 
@@ -15,8 +16,9 @@ public class MergedIslands extends Island {
      * @param firstIsland first island to merge
      * @param secondIsland second island to merge
      */
-    public MergedIslands(Island firstIsland, Island secondIsland) {
+    public MergedIslands(Island firstIsland, Island secondIsland) throws InconsistentStateException {
         super(firstIsland.getIndex().get(0));
+        if (firstIsland == null || secondIsland == null) throw new InconsistentStateException("It's not possible to merge the islands because al least one of the two is null", toString(), "MergedIslands(Island firstIsland, Island secondIsland)");
         this.firstIsland = firstIsland;
         this.secondIsland = secondIsland;
     }
@@ -74,14 +76,15 @@ public class MergedIslands extends Island {
      * Adds the student passed as parameter on the island which has the index passed as parameter
      * @param newStudent instance of the student to put on the island
      * @param index index of the island where the student has to be placed
+     * @throws InconsistentStateException
      */
-    public void addStudents(Student newStudent, int index) throws InvalidIndexException {
+    public void addStudents(Student newStudent, int index) throws InconsistentStateException {
         if (firstIsland.getIndex().contains(index))
             firstIsland.addStudents(newStudent, index);
         else if (secondIsland.getIndex().contains(index))
             secondIsland.addStudents(newStudent, index);
         else
-            throw new InvalidIndexException("The island index is wrong, you have to add the student on another island");
+            throw new InconsistentStateException("The island index is wrong, you have to add the student on another island", toString(), "addStudents(Student newStudent, int index)");
     }
 
     /**
@@ -89,7 +92,7 @@ public class MergedIslands extends Island {
      * @return list containing all the students placed on the set of merged island
      */
     @Override
-    public List<Student> getStudents(){
+    public List<Student> getStudents() {
         List<Student> studentsOnTheIslands = new ArrayList<>();
         studentsOnTheIslands.addAll(firstIsland.getStudents());
         studentsOnTheIslands.addAll(secondIsland.getStudents());
@@ -101,8 +104,8 @@ public class MergedIslands extends Island {
      * @return number of normal islands which are fused together
      */
     @Override
-    public int getAggregation(){
-        return firstIsland.getAggregation() + secondIsland.getAggregation();
+    public int getAggregationDimension() {
+        return firstIsland.getAggregationDimension() + secondIsland.getAggregationDimension();
     }
 
     /**
@@ -134,9 +137,9 @@ public class MergedIslands extends Island {
     }
 
     /**
-     * Return the number of students on the merged Island for the selected color
-     * @param color
-     * @return
+     * Returns the number of students on the merged island whose color is the selected color
+     * @param color color of the students which are looked for
+     * @return number of students of the color passed as parameter which are on the island
      */
     @Override
     public int getNumberOfStudentsForColor(PawnColor color) {

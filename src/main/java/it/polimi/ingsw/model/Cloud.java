@@ -60,9 +60,9 @@ public class Cloud implements Serializable {
     }
 
     /**
-     * returns the number of students on the cloud which are of the color passed by parameter
-     * @param color
-     * @return
+     * Returns the number of students on the cloud which are of the color passed as parameter
+     * @param color color of the students which are looked for
+     * @return number of students of the color passed as parameter which are on the cloud
      */
     public int getNumberOfStudentsForColor(PawnColor color) {
         int count = 0;

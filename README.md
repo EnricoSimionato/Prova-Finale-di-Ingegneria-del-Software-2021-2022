@@ -43,7 +43,6 @@ Il protocollo descritto nel file è stato leggermente modificato negli ultimi gi
 Sono stati scritti i test necessari ad avere una buona copertura dei metodi implementati nelle classi di modello e controller.
 
 ![alt text](https://github.com/MichaelVitali/ing-sw-2022-Vitali-Tacca-Simionato/blob/master/deliverables/test%20Coverage/report_coverage.jpg?raw=true)
-<br><br><br><br><br>
 
 <h3>JavaDoc</h3>
 La JavaDoc, redatta in parallelo allo sviluppo del gioco, fornisce una descrizione della maggior parte dei metodi implementati. Essa segue le tecniche di documentazione di Java.

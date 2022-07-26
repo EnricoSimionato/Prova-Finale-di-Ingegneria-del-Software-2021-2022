@@ -12,7 +12,7 @@ public class RoundTest {
 
     private Bag bag = new Bag();
     private SchoolBoard[] schoolBoards = new SchoolBoard[] { new SchoolBoard(7, TowerColor.WHITE, 8), new SchoolBoard(7, TowerColor.BLACK, 8)};
-    private GameTable gameTable = new GameTable(2, schoolBoards,  bag);
+    private GameTable gameTable;
     private Player[] players = {new Player("player0", 0,  new ArrayList<Assistant>()), new Player("player1", 1,  new ArrayList<Assistant>())};
 
     private Game game2p;
@@ -20,11 +20,17 @@ public class RoundTest {
     //PianificationPhase Tests
 
     @Before
-    public void setUp(){
-        List<String> nicknames = new ArrayList<>();
-        nicknames.add("mike");
-        nicknames.add("enri");
-        game2p = new Game(2, nicknames);
+    public void setUp() {
+        try {
+            gameTable = new GameTable(2, schoolBoards, bag);
+            List<String> nicknames = new ArrayList<>();
+            nicknames.add("mike");
+            nicknames.add("enri");
+            game2p = new Game(2, nicknames);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
+        }
     }
 /*
     @Test
@@ -272,7 +278,7 @@ public class RoundTest {
 
 
     @Test
-    public void testSwitchToPianificationPhase() throws InvalidIndexException {
+    public void testSwitchToPianificationPhase() throws InvalidIndexException, ImpossibleToStartTheMatchException {
 
         Game gameTest = new Game(2, Arrays.stream(new String[]{"player0","player1"}).collect(Collectors.toList()));
         gameTest.startRound();
@@ -295,7 +301,7 @@ public class RoundTest {
     }
 
     @Test
-    public void testSwitchToActionPhase() throws InvalidIndexException {
+    public void testSwitchToActionPhase() throws InvalidIndexException, ImpossibleToStartTheMatchException {
         Game gameTest = new Game(2, Arrays.stream(new String[]{"player0","player1"}).collect(Collectors.toList()));
         gameTest.startRound();
         game2p.startRound();

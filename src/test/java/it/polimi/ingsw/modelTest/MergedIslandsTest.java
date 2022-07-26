@@ -1,8 +1,10 @@
 package it.polimi.ingsw.modelTest;
 
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.exception.InconsistentStateException;
 import it.polimi.ingsw.model.exception.InvalidIndexException;
 import it.polimi.ingsw.model.exception.IslandAlreadyForbiddenException;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -13,8 +15,19 @@ import static org.junit.Assert.*;
 public class MergedIslandsTest {
     private Island firstIsland = new Island(0);
     private Island secondIsland = new Island (1);
-    private MergedIslands mergedIslands = new MergedIslands(firstIsland, secondIsland);
-    private MergedIslands mergedIslands2 = new MergedIslands(mergedIslands, new Island(2));
+    private MergedIslands mergedIslands;
+    private MergedIslands mergedIslands2;
+
+    @Before
+    public void initialize() {
+        try {
+            mergedIslands = new MergedIslands(firstIsland, secondIsland);
+            mergedIslands2 = new MergedIslands(mergedIslands, new Island(2));
+        } catch (InconsistentStateException e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
+        }
+    }
 
     @Test
     public void testIsForbidden() throws IslandAlreadyForbiddenException {
@@ -96,12 +109,12 @@ public class MergedIslandsTest {
 
     @Test
     public void testGetAggregation() {
-        assertEquals(mergedIslands.getAggregation(), 2);
-        assertEquals(3, mergedIslands2.getAggregation());
+        assertEquals(mergedIslands.getAggregationDimension(), 2);
+        assertEquals(3, mergedIslands2.getAggregationDimension());
     }
 
     @Test
-    public void testGetStudents() throws InvalidIndexException {
+    public void testGetStudents() throws InconsistentStateException {
         Student s1 = new Student(PawnColor.GREEN);
         mergedIslands.addStudents(s1, 0);
         assertEquals(1, mergedIslands.getStudents().size());
@@ -138,7 +151,7 @@ public class MergedIslandsTest {
     }
 
     @Test
-    public void testGetNumberOfStudentsFromColor() throws InvalidIndexException {
+    public void testGetNumberOfStudentsFromColor() throws InvalidIndexException, InconsistentStateException {
         firstIsland.addStudents(new Student(PawnColor.YELLOW), 0);
         assertEquals(1, mergedIslands.getNumberOfStudentsForColor(PawnColor.YELLOW));
     }

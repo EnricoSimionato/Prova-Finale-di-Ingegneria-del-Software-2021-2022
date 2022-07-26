@@ -22,9 +22,10 @@ public class Tower implements Serializable {
     }
 
     /**
-     * Compare two Tower color
-     * @param o
-     * @return tree if the two Tower color are the same, false otherwise
+     * Compares the parameter o and the current instance of the class Tower (this).
+     * Two instances are equal if they have the same color
+     * @param o object to compare to this
+     * @return true, if the object and this instance are equal; false, if the object and this instance are different
      */
     @Override
     public boolean equals(Object o) {

@@ -1,9 +1,6 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.exception.EffectCannotBeActivatedException;
-import it.polimi.ingsw.model.exception.EmptyBagException;
-import it.polimi.ingsw.model.exception.InvalidIndexException;
-import it.polimi.ingsw.model.exception.NotEnoughCoins;
+import it.polimi.ingsw.model.exception.*;
 import it.polimi.ingsw.observer.Observable;
 
 import java.io.Serializable;
@@ -29,12 +26,13 @@ public class Game extends Observable<Game> implements Serializable {
      */
     public Game(int numberOfPlayers) { this.numberOfPlayers = numberOfPlayers; }
 
+    ///////////////////////////////Da sistemare alla creazione del Game
     /**
      *
      * @param numberOfPlayers
      * @param nicknames
      */
-    public Game(int numberOfPlayers, List<String> nicknames) {
+    public Game(int numberOfPlayers, List<String> nicknames) throws ImpossibleToStartTheMatchException {
         this.numberOfPlayers = numberOfPlayers;
         gameMode = GameMode.NORMAL;
         gameTable = createGameTable(numberOfPlayers);
@@ -173,7 +171,7 @@ public class Game extends Observable<Game> implements Serializable {
      * @param numberOfPlayers
      * @return
      */
-    public GameTable createGameTable(int numberOfPlayers) {
+    public GameTable createGameTable(int numberOfPlayers) throws ImpossibleToStartTheMatchException {
         SchoolBoard[] schoolBoards = new SchoolBoard[numberOfPlayers];
 
         int numberOfStudentsOnEntrance = 7;
@@ -204,7 +202,12 @@ public class Game extends Observable<Game> implements Serializable {
                 break;
         }
         Bag bag = createBag();
-        return new GameTable(numberOfPlayers, schoolBoards, bag);
+        try {
+            GameTable gameTable = new GameTable(numberOfPlayers, schoolBoards, bag);
+            return gameTable;
+        } catch (EmptyBagException e) {
+            throw new ImpossibleToStartTheMatchException("Some error occur. Impossible to start the match");
+        }
     }
 
     /**
@@ -222,7 +225,7 @@ public class Game extends Observable<Game> implements Serializable {
     public List<Assistant> createAssistants(){
         List<Assistant> l = new ArrayList<>();
 
-        String assistants = AssistantStorage.getAssistants();
+        String assistants = Assistant.getAssistants();
         String[] assistantsParsed = assistants.split(";");
         for (String s : assistantsParsed) {
             String[] assistant = s.split(",");

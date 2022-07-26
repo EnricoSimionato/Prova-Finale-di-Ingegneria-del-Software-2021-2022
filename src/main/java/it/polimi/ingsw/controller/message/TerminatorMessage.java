@@ -12,7 +12,7 @@ public class TerminatorMessage extends Message {
     }
 
     /**
-     * returns the message attribute
+     * Returns the message attribute
      * @return
      */
     public String getMessage() {

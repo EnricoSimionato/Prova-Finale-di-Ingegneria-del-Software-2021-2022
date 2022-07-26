@@ -6,7 +6,7 @@ import it.polimi.ingsw.model.exception.FullTableException;
 import java.io.Serializable;
 
 public class Table implements Serializable {
-    private final int NUMBEROFSEATS = 10;
+    private final int MAXIMUMNUMBEROFSEATS = 10;
     private final PawnColor color;
     private final Student[] students;
     private boolean professor;
@@ -17,7 +17,7 @@ public class Table implements Serializable {
      */
     public Table(PawnColor color) {
         this.color = color;
-        students = new Student[NUMBEROFSEATS];
+        students = new Student[MAXIMUMNUMBEROFSEATS];
         professor = false;
     }
 
@@ -44,7 +44,7 @@ public class Table implements Serializable {
      */
     public int getNumberOfStudents() {
         int i;
-        for (i = 0; i < NUMBEROFSEATS ; i++) {
+        for (i = 0; i < MAXIMUMNUMBEROFSEATS ; i++) {
             if (students[i] == null) break;
         }
         return i;
@@ -66,7 +66,7 @@ public class Table implements Serializable {
      */
     public void addStudent(Student newStudent) throws FullTableException {
         if (students.length <= getNumberOfStudents()) throw new FullTableException(newStudent);
-        for (int i = 0; i < NUMBEROFSEATS; i++) {
+        for (int i = 0; i < MAXIMUMNUMBEROFSEATS; i++) {
             if (students[i] == null) {
                 students[i] = newStudent;
                 break;
@@ -82,7 +82,7 @@ public class Table implements Serializable {
     public Student removeStudentFromTable() throws EmptyTableException {
         Student removedStudent = null;
         if (getNumberOfStudents() <= 0) throw new EmptyTableException();
-        for (int i = 0; i < NUMBEROFSEATS; i++) {
+        for (int i = 0; i < MAXIMUMNUMBEROFSEATS; i++) {
             if (students[i] == null) {
                 removedStudent = students[--i];
                 students[i] = null;

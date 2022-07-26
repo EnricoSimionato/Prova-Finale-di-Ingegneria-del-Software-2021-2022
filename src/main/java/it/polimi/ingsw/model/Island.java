@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.exception.InconsistentStateException;
 import it.polimi.ingsw.model.exception.InvalidIndexException;
 import it.polimi.ingsw.model.exception.IslandAlreadyForbiddenException;
 
@@ -8,20 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Island implements Serializable {
+
     /**
-     * index is the index/identifier of the island in the group of islands on the game table (in the beginning).
-     *      The index is created at the beginning of the match and remains the same even the island merges itself to another one
+     * @index is the index/identifier of the island in the group of islands on the game table (in the beginning).
+     * The index is created at the beginning of the match and remains the same even the island merges itself to another one
      */
-    private int index;
+    private final int index;
     private Tower tower;
     private List<Student> students;
     private boolean prohibition;
 
-    /**
-     *Constructs an empty island
-     */
-    public Island() {
-    }
 
     /**
      * Creates an island which index is the index passed as parameter
@@ -78,8 +75,8 @@ public class Island implements Serializable {
      * @param newStudent instance of the student to put on the island
      * @throws InvalidIndexException if the index passed as parameter doesn't match with the index of the island
      */
-    public void addStudents(Student newStudent, int index) throws InvalidIndexException {
-        if (this.index != index) throw new InvalidIndexException("The island index is wrong, you have to add the student on another island");
+    public void addStudents(Student newStudent, int index) throws InconsistentStateException {
+        if (this.index != index) throw new InconsistentStateException("The island index is wrong, you have to add the student on another island", toString(), "addStudents(Student newStudent, int index)");
         students.add(newStudent);
     }
 
@@ -88,14 +85,14 @@ public class Island implements Serializable {
      * @return list containing all the students placed on the island
      */
     public List<Student> getStudents() {
-        return students;
+        return new ArrayList<>(students);
     }
 
     /**
-     * Returns one
+     * Returns one because the instance of a normal island contains one single island
      * @return one
      */
-    public int getAggregation(){
+    public int getAggregationDimension() {
         return 1;
     }
 
@@ -124,9 +121,9 @@ public class Island implements Serializable {
 
 
     /**
-     * returns the number of students of the color passed as a parameter
-     * @param color
-     * @return
+     * Returns the number of students on the island which are of the color passed as parameter
+     * @param color color of the students which are looked for
+     * @return number of students of the color passed as parameter which are on the island
      */
     public int getNumberOfStudentsForColor(PawnColor color) {
         int count = 0;

@@ -2,6 +2,7 @@ package it.polimi.ingsw.modelTest;
 
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.exception.EffectCannotBeActivatedException;
+import it.polimi.ingsw.model.exception.ImpossibleToStartTheMatchException;
 import it.polimi.ingsw.model.exception.InvalidIndexException;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,7 +60,7 @@ public class HealerTest {
     }
 
     @Test
-    public void testSwitchToPianificationPhase() throws InvalidIndexException {
+    public void testSwitchToPianificationPhase() throws InvalidIndexException, ImpossibleToStartTheMatchException {
         Game gameTest = new Game(2, Arrays.stream(new String[]{"player0","player1"}).collect(Collectors.toList()));
         gameTest.startRound();
         round.getGame().startRound();

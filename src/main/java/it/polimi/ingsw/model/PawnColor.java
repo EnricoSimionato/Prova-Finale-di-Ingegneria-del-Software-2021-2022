@@ -21,35 +21,32 @@ public enum PawnColor implements Serializable {
     public int getIndex() { return index; }
 
     /**
-     * Return the associate Pawn Color for the received index
-     * @param index
-     * @throws InvalidIndexException
+     * Returns the pawn color which has the index equals to the received one
+     * @param index index of the color which is looked for
+     * @throws InvalidIndexException if there is no color which as the required index associated
      */
     public static PawnColor associateIndexToPawnColor(int index) throws InvalidIndexException {
-
-        PawnColor pc = null;
-
-        if(index<0 || index>4)
+        PawnColor pawnColor = null;
+        if(index < 0 || index > 4)
             throw new InvalidIndexException("There is no such pawn color");
 
         switch (index){
             case 0:
-                pc=PawnColor.GREEN;
+                pawnColor = PawnColor.GREEN;
                 break;
             case 1:
-                pc=PawnColor.RED;
+                pawnColor = PawnColor.RED;
                 break;
             case 2:
-                pc=PawnColor.YELLOW;
+                pawnColor = PawnColor.YELLOW;
                 break;
             case 3:
-                pc=PawnColor.PINK;
+                pawnColor = PawnColor.PINK;
                 break;
             case 4:
-                pc=PawnColor.BLUE;
+                pawnColor = PawnColor.BLUE;
                 break;
         }
-
-        return pc;
+        return pawnColor;
     }
 }

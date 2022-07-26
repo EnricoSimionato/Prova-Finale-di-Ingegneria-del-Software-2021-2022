@@ -16,7 +16,7 @@ public class GameTable implements Serializable {
     private int motherNaturePosition;
     private Bag bag;
 
-    public GameTable(int numberOfPlayers, SchoolBoard[] schoolBoards, Bag bag) {
+    public GameTable(int numberOfPlayers, SchoolBoard[] schoolBoards, Bag bag) throws EmptyBagException {
         this.numberOfPlayers = numberOfPlayers;
 
         this.bag = bag;
@@ -35,7 +35,7 @@ public class GameTable implements Serializable {
         addStudentsOnIslandOnStart();
     }
 
-    public void addStudentsOnIslandOnStart() {
+    public void addStudentsOnIslandOnStart() throws EmptyBagException {
         try {
             Random random = new Random();
             List<Student> studentsForIsland = new ArrayList<>();
@@ -44,7 +44,7 @@ public class GameTable implements Serializable {
                 if (i != motherNaturePosition && i != (motherNaturePosition + 6) % 12)
                     addStudentOnIsland(studentsForIsland.remove(random.nextInt(studentsForIsland.size())), i);
             }
-        }catch (InvalidIndexException e){}
+        } catch (InvalidIndexException e){}
     }
 
     /**
@@ -193,7 +193,7 @@ public class GameTable implements Serializable {
             this.islands.get(index).addStudents(student, islandIndex);
         } catch (OutOfBoundException e) {
             e.printStackTrace();
-        } catch (InvalidIndexException e) {
+        } catch (InconsistentStateException e) { ///////////////////////////////// da sistemare
             e.printStackTrace();
         }
     }
@@ -212,7 +212,7 @@ public class GameTable implements Serializable {
      * Calculates if, after the movement of mother nature, the player with the highest influence is the same. If not the towers on the island are changed
      * with the towers of the player with the highest influence. The old towers on the island are added to his player on his schoolboard.
      */
-    public void putTowerOrChangeColorIfNecessary(int[] influences) throws NoMoreTowersException, ThreeOrLessIslandException { // pay attention : influence.length isn't numberOfPlayers
+    public void putTowerOrChangeColorIfNecessary(int[] influences) throws NoMoreTowersException, ThreeOrLessIslandException {//, InconsistentStateException { // pay attention : influence.length isn't numberOfPlayers
         Tower towerOnTheIsland;
         if (islands.get(motherNaturePosition).getTowers().size() == 0) towerOnTheIsland = null;
         else towerOnTheIsland = islands.get(motherNaturePosition).getTowers().get(0);
@@ -242,10 +242,10 @@ public class GameTable implements Serializable {
                     }
                     if (!equalInfluenceToOtherPlayer) {
                         islands.get(motherNaturePosition).setTowers(schoolBoards[indexMaxInfluence].removeTowers(1));
-                        mergeIslandsIfNecessary();
+                         try { mergeIslandsIfNecessary(); } catch (InconsistentStateException e) {e.printStackTrace();} ///////////da sistemare
                     }
                 } else if (indexMaxInfluence != towerOnTheIsland.getColor().getIndex()) {
-                    int numberOfRequiredTowers = islands.get(motherNaturePosition).getAggregation();
+                    int numberOfRequiredTowers = islands.get(motherNaturePosition).getAggregationDimension();
                     List<Tower> previousTowers = islands.get(motherNaturePosition).removeTowers();
                     schoolBoards[towerOnTheIsland.getColor().getIndex()].addTowers(previousTowers);
                     islands.get(motherNaturePosition).setTowers(schoolBoards[indexMaxInfluence].removeTowers(numberOfRequiredTowers));
@@ -254,7 +254,7 @@ public class GameTable implements Serializable {
                     if (islands.size() <= 3) {
                         throw new ThreeOrLessIslandException();
                     }
-                    mergeIslandsIfNecessary();
+                    try { mergeIslandsIfNecessary(); } catch (InconsistentStateException e) {e.printStackTrace();} ///////////da sistemare
                 }
                 if (islands.size() <= 3) {
                     throw new ThreeOrLessIslandException();
@@ -323,7 +323,7 @@ public class GameTable implements Serializable {
             if (towersOnTheIslands.size() > 0) {
                 if (schoolBoards[i].getTowers().size() <= 0) { } //exception
                 else if (schoolBoards[i].getTowers().get(0).getColor() == towersOnTheIslands.get(0).getColor())
-                    influenceValues[i] += islands.get(motherNaturePosition).getAggregation();
+                    influenceValues[i] += islands.get(motherNaturePosition).getAggregationDimension();
             }
         }
         return influenceValues;
@@ -332,7 +332,7 @@ public class GameTable implements Serializable {
     /**
      * Calculates if there are two island close to each other with the same color tower. If there are, they are merged.
      */
-    public void mergeIslandsIfNecessary() {
+    public void mergeIslandsIfNecessary() throws InconsistentStateException{
         List<Tower> towersOnTheIsland = islands.get(motherNaturePosition).getTowers();
         List<Tower> towersOnTheNextIsland = islands.get((motherNaturePosition + 1) % islands.size()).getTowers();
         List<Tower> towersOnThePreviousIsland = islands.get((motherNaturePosition == 0 ? islands.size() -1 : motherNaturePosition - 1)).getTowers();

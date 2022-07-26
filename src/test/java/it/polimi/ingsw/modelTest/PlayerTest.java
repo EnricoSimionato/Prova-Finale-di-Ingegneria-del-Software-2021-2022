@@ -16,7 +16,7 @@ public class PlayerTest {
 
     @Test
     @Before
-    public void testAddGameTable() {
+    public void testAddGameTable() throws EmptyBagException{
         SchoolBoard[] schoolBoards= new SchoolBoard[2];
         schoolBoards[0] = new SchoolBoard(6, TowerColor.WHITE, 8);
         schoolBoards[1] = new SchoolBoard(6, TowerColor.BLACK, 8);
