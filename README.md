@@ -43,7 +43,6 @@ Il protocollo descritto nel file è stato leggermente modificato negli ultimi gi
 Sono stati scritti i test necessari ad avere una buona copertura dei metodi implementati nelle classi di modello e controller.
 
 ![alt text](https://github.com/MichaelVitali/ing-sw-2022-Vitali-Tacca-Simionato/blob/master/deliverables/test%20Coverage/report_coverage.jpg?raw=true)
-<br><br><br><br><br>
 
 <h3>JavaDoc</h3>
 La JavaDoc, redatta in parallelo allo sviluppo del gioco, fornisce una descrizione della maggior parte dei metodi implementati. Essa segue le tecniche di documentazione di Java.
@@ -81,18 +80,23 @@ I file jar generati sono due: uno per il client e uno per il server. Gli eseguib
 
 ---
 
+<h3>Client</h3>
+Per avviare il client di Eriantys si possono digitare sul terminale diversi comandi a seconda delle inforazioni che si hanno riguardo al server e sulla base della tipologia di client con cui si desidera giocare.<br>
+Nel caso in cui non sia noto l'ip del server è possibile comunque lanciare il client che si connetterà automaticamente a patto i due dispositivi siano sulla stessa rete locale.
+Nel caso in cui sia noto l'ip oppure siano noti ip e porta relativi al server, essi potranno essere inseriti all'interno del comando per richiedere la connessione a un socket specifico.
+
 <h3>CLI</h3>
-Per avviare il client di Eriantys e giocare da CLI, il comando, da digitare sul terminale, è:<br>
+Per avviare il client di Eriantys e giocare da GUI, il comando, da digitare sul terminale, è:<br>
 
 ```
-java -jar eriantys-client.jar cli server-ip-address [server-port-number]
+java -jar eriantys-client.jar cli [server-ip-address [server-port-number]]
 ```
 
 <h3>GUI</h3>
 Per avviare il client di Eriantys e giocare da GUI, il comando, da digitare sul terminale, è:<br>
 
 ```
-java -jar eriantys-client.jar gui server-ip-address [server-port-number]
+java -jar eriantys-client.jar gui [server-ip-address [server-port-number]]
 ```
 <h3>Server</h3>
 Per avviare il server di Eriantys, il comando, da digitare sul terminale, è:<br>
@@ -103,6 +107,9 @@ java -jar eriantys-server.jar [server-port-number]
 
 <h3>Parametri facoltativi</h3>
 I parametri tra parentesi quadre sono facoltativi e permettono di cambiare porta su cui mettere in ascolto il server. Di default la porta è 50000. Se viene modificata la porta su client, o sul server, deve essere avviato anche l'altro componente con la porta diversa.
+
+<h3>Parametri facoltativi</h3>
+E' importante che la porta 40000 non sia occupata lato server, nel caso in cui si voglia rendere possibile l'autoconnessione dei client al server nella rete locale senza che essi abbiano informazioni sull'ip e sulla porta su cui gira il server. 
 
 <h2>Componenti del gruppo</h2>
 
