@@ -348,6 +348,14 @@ public class BoardController extends GuiController {
     }
 
     /**
+     * Returns the id of the player whose the client is
+     * @return the id of the player whose the client is
+     */
+    public int getMyPlayerId() {
+        return myPlayerId;
+    }
+
+    /**
      * Sets the student image on the node selecting the color of the student passed as parameter
      * @param node
      * @param student
@@ -505,6 +513,31 @@ public class BoardController extends GuiController {
     }
 
     /**
+     * Renders the student of the enemy's table which are between the two indexes (indexes are included in the rendering). This method allows the GUI to be more reactive
+     * @param color color of the table which has to be rendered
+     * @param firstIndex index of the student from which the render has to start
+     * @param lastIndex index of the student where the render has to end
+     */
+    public void displayEnemyStudentOnTable(PawnColor color, int firstIndex, int lastIndex) {
+        try {
+            int numberOfStudentOnTable = board.getGametable().getSchoolBoards()[enemyBoardDisplayed].getNumberOfStudentsOnTable(color);
+            for (int i = firstIndex; i < lastIndex + 1; i++) {
+                if (i < numberOfStudentOnTable)
+                    setStudent(enemyTables.get("enemyStudent" + color.getIndex() + "" + i), new Student(PawnColor.associateIndexToPawnColor(i)));
+                else
+                    setStudent(enemyTables.get("enemyStudent" + color.getIndex() + "" + i), null);
+            }
+        } catch (InvalidIndexException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void displayStudentOnEnemyEntrance(int studentIndex) {
+        SchoolBoard schoolBoard = board.getGametable().getSchoolBoards()[(myPlayerId + (enemyBoardDisplayed)) % board.getNumberOfPLayers()];
+        setStudent(enemyEntrance.get(("enemyEntrance" + studentIndex)), schoolBoard.getStudentsFromEntrance()[studentIndex]);
+    }
+
+    /**
      * calls the displayEnemyEntrance method, passing as parameter enemyBoardDisplayed
      */
     public void displayEnemyEntrance() {
@@ -546,6 +579,17 @@ public class BoardController extends GuiController {
             for (int j = schoolBoard.getNumberOfStudentsOnTable(i); j < 10; j++) {
                 setStudent(enemyTables.get(("enemyStudent" + i + "" + j)), null);
             }
+        }
+    }
+
+    public void displayEnemyProfessor(PawnColor color) {
+        SchoolBoard schoolBoard = board.getGametable().getSchoolBoards()[enemyBoardDisplayed];
+        if (schoolBoard.getProfessors().contains(color)) {
+            setProfessor(enemyProfessors.get(("enemyProfessor" + color.getIndex())), color);
+        } else {
+            setProfessor(enemyProfessors.get(("enemyProfessor" + color.getIndex())), null);
+            enemyProfessors.get(("enemyProfessor" + color.getIndex())).setLayoutX(30.0 + (color.getIndex() * 42.0));
+            enemyProfessors.get(("enemyProfessor" + color.getIndex())).setLayoutY(147.0);
         }
     }
 
@@ -625,6 +669,31 @@ public class BoardController extends GuiController {
     }
 
     /**
+     * Renders the student of the current player's table which are between the two indexes (indexes are included in the rendering). This method allows the GUI to be more reactive
+     * @param color color of the table which has to be rendered
+     * @param firstIndex index of the student from which the render has to start
+     * @param lastIndex index of the student where the render has to end
+     */
+    public void displayMyStudentOnTable(PawnColor color, int firstIndex, int lastIndex) {
+        try {
+            int numberOfStudentOnTable = board.getGametable().getSchoolBoards()[myPlayerId].getNumberOfStudentsOnTable(color);
+            for (int i = firstIndex; i < lastIndex + 1; i++) {
+                if (i < numberOfStudentOnTable)
+                    setStudent(enemyTables.get("myStudent" + color.getIndex() + "" + i), new Student(PawnColor.associateIndexToPawnColor(i)));
+                else
+                    setStudent(enemyTables.get("myStudent" + color.getIndex() + "" + i), null);
+            }
+        } catch (InvalidIndexException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void displayStudentOnMyEntrance(int studentIndex) {
+        SchoolBoard schoolBoard = board.getGametable().getSchoolBoards()[myPlayerId];
+        setStudent(enemyEntrance.get(("enemyEntrance" + studentIndex)), schoolBoard.getStudentsFromEntrance()[studentIndex]);
+    }
+
+    /**
      * Displays the entrance of the actual player
      */
     public void displayMyEntrance() {
@@ -651,6 +720,17 @@ public class BoardController extends GuiController {
             for (int j = schoolBoard.getNumberOfStudentsOnTable(i); j < 10; j++) {
                 setStudent(myTablesImages.get(("studentImage" + i + "" + j)), null);
             }
+        }
+    }
+
+    public void displayMyProfessor(PawnColor color) {
+        SchoolBoard schoolBoard = board.getGametable().getSchoolBoards()[myPlayerId];
+        if (schoolBoard.getProfessors().contains(color)) {
+            setProfessor(myProfessors.get(("myProfessor" + color.getIndex())), color);
+        } else {
+            setProfessor(myProfessors.get(("myProfessor" + color.getIndex())), null);
+            myProfessors.get(("myProfessor" + color.getIndex())).setLayoutX(30.0 + (color.getIndex() * 42.0));
+            myProfessors.get(("myProfessor" + color.getIndex())).setLayoutY(147.0);
         }
     }
 
@@ -759,6 +839,15 @@ public class BoardController extends GuiController {
     /**
      * Displays the islands, rendering students, towers and mother nature
      */
+    public void displayIsland(int islandIndex) {
+        GameTable gameTable = board.getGametable();
+        Island islands = (gameTable == null ? null : board.getGametable().getIslands()) == null ? null : board.getGametable().getIslands().get(islandIndex);
+
+    }
+
+    /**
+     * Displays the islands, rendering students, towers and mother nature
+     */
     public void displayIslands() {
         Platform.runLater(() -> {
             GameTable gameTable = board.getGametable();
@@ -850,6 +939,21 @@ public class BoardController extends GuiController {
             }
         });
     }*/
+
+    public void displayCloud(int cloudIndex) {
+        if (board != null) {
+            if (board.getClouds()[cloudIndex].getStudents().size() != 0) {
+                for (int j = 0; j < board.getClouds()[cloudIndex].getStudents().size(); j++) {
+                    studentsClouds.get("cloud" + cloudIndex + "Student" + j).setVisible(true);
+                    setStudent(studentsClouds.get("cloud" + cloudIndex + "Student" + j) , board.getClouds()[cloudIndex].getStudents().get(j));
+                }
+            } else {
+                for (int j = 0; j < 4; j++) {
+                    studentsClouds.get("cloud" + cloudIndex + "Student" + j).setVisible(false);
+                }
+            }
+        }
+    }
 
     /**
      * displays the clouds and puts the students on them whether there are any

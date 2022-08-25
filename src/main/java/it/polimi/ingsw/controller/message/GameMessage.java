@@ -11,6 +11,7 @@ import java.util.List;
 public class GameMessage extends Message implements Serializable {
     private int state;
     private int playerId;
+    private int causingPlayerId;
     private String playerMessageCli;
     private String playerMessageGui;
     private GameTable gametable;
@@ -31,13 +32,14 @@ public class GameMessage extends Message implements Serializable {
     private TowerColor winner;
 
     /**
-     * updates all the attributes whenever a new gameMessage is created with the model information
-     * @param model
-     * @param playerId
+     * Creates a new generic message which has all the information to update the client state in face of a change of the modek
+     * @param model entire game instance
+     * @param causingPlayerId id of the player which causes the change of the model
      */
-    public GameMessage(Game model, int playerId) {
+    public GameMessage(Game model, int causingPlayerId) {
         state = model.getRound().getRoundState();
-        this.playerId = playerId;
+        playerId = -1;
+        this.causingPlayerId = causingPlayerId;
         playerMessageCli = model.getPlayer(playerId).getPlayerMessageCli();
         playerMessageGui = model.getPlayer(playerId).getPlayerMessageGui();
         gametable = model.getGameTable();
@@ -58,6 +60,11 @@ public class GameMessage extends Message implements Serializable {
         victory = model.isVictory();
         draw = model.isDraw();
         winner = model.getWinner();
+    }
+
+
+    public int getCausingPlayerId() {
+        return causingPlayerId;
     }
 
     /**

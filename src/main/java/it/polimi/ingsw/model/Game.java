@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.controller.message.GameMessage;
 import it.polimi.ingsw.model.exception.*;
 import it.polimi.ingsw.observer.Observable;
 
@@ -19,7 +20,7 @@ public class Game extends Observable<Game> implements Serializable {
     private boolean victory;
     private boolean draw;
     private TowerColor winner;
-
+    private GameMessage gameMessage;
     /**
      *
      * @param numberOfPlayers
@@ -164,6 +165,14 @@ public class Game extends Observable<Game> implements Serializable {
      */
     public void setWinner(TowerColor winner) {
         this.winner = winner;
+    }
+
+    public GameMessage getGameMessage() {
+        return gameMessage;
+    }
+
+    public void setGameMessage(GameMessage gameMessage) {
+        this.gameMessage = gameMessage;
     }
 
     /**

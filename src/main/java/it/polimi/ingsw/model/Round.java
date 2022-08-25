@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.controller.message.*;
 import it.polimi.ingsw.model.exception.*;
 
 import java.io.Serializable;
@@ -42,6 +43,7 @@ public class Round implements Serializable {
 
 
         setMessageToAPlayerAndWaitingMessageForOthers(playerOrder[0], "Select an assistant", "Select an assistant");
+        getGame().setGameMessage(new GameMessage(getGame(), 0));//////////////////////////////////////
     }
 
     /**
@@ -448,6 +450,8 @@ public class Round implements Serializable {
         if (!roundEnded) {
             setMessageToAPlayerAndWaitingMessageForOthers(playerOrder[indexOfPlayerOnTurn], getStateMessageCli(), getStateMessageGui());
             game.sendGame();
+        } else {
+            getGame().setGameMessage(new RoundEndedMessage(getGame(), getPlayerOnTurn()));
         }
     }
 
@@ -491,20 +495,23 @@ public class Round implements Serializable {
             checkPlayerOnTurn(playerId);
             checkStatusAndMethod(0);
             removeAssistant(playerId, idAssistant);
+            getGame().setGameMessage(new AssistantPlayedMessage(getGame(), playerId));
             calculateNextPlayer();
         } catch (PlayerNotOnTurnException e) {
-
         } catch (InvalidMethodException e) {
             setPlayerMessageCli(playerId, "You cannot play any assistant now\n" + getStateMessageCli());
             setPlayerMessageGui(playerId, "You cannot play any assistant now\n" + getStateMessageGui());
+            getGame().setGameMessage(new ErrorMessage(getGame(), playerId));
             game.sendGame();
         } catch (IndexOutOfBoundsException e) {
             setPlayerMessageCli(playerId,"You can't choose that assistant\n" + getStateMessageCli());
             setPlayerMessageGui(playerId,"You can't choose that assistant\n" + getStateMessageGui());
+            getGame().setGameMessage(new ErrorMessage(getGame(), playerId));
             game.sendGame();
         } catch (InvalidIndexException e) {
             setPlayerMessageCli(playerId, e.getMessage() + "\n" + getStateMessageCli());
             setPlayerMessageGui(playerId, e.getMessage() + "\n" + getStateMessageGui());
+            getGame().setGameMessage(new ErrorMessage(getGame(), playerId));
             game.sendGame();
         }
     }
@@ -523,20 +530,24 @@ public class Round implements Serializable {
             checkNumberOfMoves(playerId);
             game.getPlayer(playerId).moveStudentOnIsland(studentIndex, islandIndex);
             movesCounter[playerId]++;
+            getGame().setGameMessage(new StudentMovedFromEntranceToIslandMessage(getGame(), playerId, studentIndex, islandIndex));
             calculateNextPlayer();
         } catch (PlayerNotOnTurnException e) {
 
         } catch (InvalidMethodException e) {
             setPlayerMessageCli(playerId, "You cannot move students now\n" + getStateMessageCli());
             setPlayerMessageGui(playerId, "You cannot move students now\n" + getStateMessageGui());
+            getGame().setGameMessage(new ErrorMessage(getGame(), playerId));
             game.sendGame();
         } catch (TooManyMovesException e) {
             setPlayerMessageCli(playerId, "You can move no more students\n" + getStateMessageCli());
             setPlayerMessageGui(playerId, "You can move no more students\n" + getStateMessageGui());
+            getGame().setGameMessage(new ErrorMessage(getGame(), playerId));
             game.sendGame();
         } catch (InvalidIndexException e) {
             setPlayerMessageCli(playerId, e.getMessage() + getStateMessageCli());
             setPlayerMessageGui(playerId, e.getMessage() + getStateMessageGui());
+            getGame().setGameMessage(new ErrorMessage(getGame(), playerId));
             game.sendGame();
         }
     }
@@ -564,28 +575,34 @@ public class Round implements Serializable {
             }
             movesCounter[playerId]++;
             game.getGameTable().moveProfessorToTheRightPosition(color);
+            getGame().setGameMessage(new StudentMovedFromEntranceToTableMessage(getGame(), playerId, color, getGame().getGameTable().getSchoolBoards()[playerId].getNumberOfStudentsOnTable(color) - 1, studentIndex));
             calculateNextPlayer();
         } catch (PlayerNotOnTurnException e) {
 
         } catch (InvalidMethodException e) {
             setPlayerMessageCli(playerId, "You cannot move students now\n" + getStateMessageCli());
             setPlayerMessageGui(playerId, "You cannot move students now\n" + getStateMessageGui());
+            getGame().setGameMessage(new ErrorMessage(getGame(), playerId));
             game.sendGame();
         } catch (TooManyMovesException e) {
             setPlayerMessageCli(playerId, "You can move no more students\n" + getStateMessageCli());
             setPlayerMessageGui(playerId, "You can move no more students\n" + getStateMessageGui());
+            getGame().setGameMessage(new ErrorMessage(getGame(), playerId));
             game.sendGame();
         } catch (FullTableException e) {
             setPlayerMessageCli(playerId, "You can't move that student, his table has no more free seats\n" + getStateMessageCli());
             setPlayerMessageGui(playerId, "You can't move that student, his table has no more free seats\n" + getStateMessageGui());
+            getGame().setGameMessage(new ErrorMessage(getGame(), playerId));
             game.sendGame();
         } catch (NotEnoughCoins e) {
             setPlayerMessageCli(playerId, "You can't take a coin from a table\n" + getStateMessageCli());
             setPlayerMessageGui(playerId, "You can't take a coin from a table\n" + getStateMessageGui());
+            getGame().setGameMessage(new ErrorMessage(getGame(), playerId));
             game.sendGame();
         } catch (InvalidIndexException e) {
             setPlayerMessageCli(playerId, e.getMessage() + "\n" + getStateMessageCli());
             setPlayerMessageGui(playerId, e.getMessage() + "\n" + getStateMessageGui());
+            getGame().setGameMessage(new ErrorMessage(getGame(), playerId));
             game.sendGame();
         }
     }
@@ -664,15 +681,20 @@ public class Round implements Serializable {
                 }
                 if(game.isGameEnded()) {
                     roundState = 100;
+                    getGame().setGameMessage(new GameMessage(getGame(), playerId));
+                } else {
+                    getGame().setGameMessage(new MotherNatureMovedMessage(getGame(), playerId, islandIndex));
                 }
                 calculateNextPlayer();
             } catch (TooFarIslandException e) {
                 setPlayerMessageCli(playerId, "You cannot put mother nature in the chosen island\n" + getStateMessageCli());
                 setPlayerMessageGui(playerId, "You cannot put mother nature in the chosen island\n" + getStateMessageGui());
+                getGame().setGameMessage(new ErrorMessage(getGame(), playerId));
                 game.sendGame();
             } catch (InvalidIndexException e) {
                 setPlayerMessageCli(playerId, "You cannot put mother nature in the chosen island, it does not exist\n" + getStateMessageCli());
                 setPlayerMessageGui(playerId, "You cannot put mother nature in the chosen island, it does not exist\n" + getStateMessageGui());
+                getGame().setGameMessage(new ErrorMessage(getGame(), playerId));
                 game.sendGame();
             }
         } catch (PlayerNotOnTurnException e) {
@@ -680,6 +702,7 @@ public class Round implements Serializable {
         } catch (InvalidMethodException e) {
             setPlayerMessageCli(playerId, "You cannot move mother nature now");
             setPlayerMessageGui(playerId, "You cannot move mother nature now");
+            getGame().setGameMessage(new ErrorMessage(getGame(), playerId));
             game.sendGame();
         }
     }
@@ -694,20 +717,24 @@ public class Round implements Serializable {
             checkPlayerOnTurn(playerId);
             checkStatusAndMethod(3);
             game.getPlayer(playerId).takeStudentsFromCloud(cloudIndex);
+            getGame().setGameMessage(new StudentMovedFromCloudToEntranceMessage(getGame(), playerId, cloudIndex));
             calculateNextPlayer();
         } catch (PlayerNotOnTurnException e) {
 
         } catch (InvalidMethodException e) {
             setPlayerMessageCli(playerId, "You cannot get students from cloud now\n" + getStateMessageCli());
             setPlayerMessageGui(playerId, "You cannot get students from cloud now\n" + getStateMessageGui());
+            getGame().setGameMessage(new ErrorMessage(getGame(), playerId));
             game.sendGame();
         } catch (InvalidIndexException e) {
             setPlayerMessageCli(playerId, e.getMessage() + "\n" + getStateMessageCli());
             setPlayerMessageGui(playerId, e.getMessage() + "\n" + getStateMessageGui());
+            getGame().setGameMessage(new ErrorMessage(getGame(), playerId));
             game.sendGame();
         } catch (EmptyCloudException e)  {
             setPlayerMessageCli(playerId, "The chosen cloud is empty. Chose another one!");
             setPlayerMessageGui(playerId, "The chosen cloud is empty. Chose another one!");
+            getGame().setGameMessage(new ErrorMessage(getGame(), playerId));
             game.sendGame();
         }
     }
@@ -730,18 +757,22 @@ public class Round implements Serializable {
         } catch (AlreadyPlayedCharcaterException e) {
             setPlayerMessageCli(playerId, "You already played a character\n" + getStateMessageCli());
             setPlayerMessageGui(playerId, "You already played a character\n" + getStateMessageGui());
+            getGame().setGameMessage(new ErrorMessage(getGame(), playerId));
             getGame().sendGame();
         } catch (InvalidMethodException e) {
             setPlayerMessageCli(playerId, "You can't play a character during the pianification phase\n" + getStateMessageCli());
             setPlayerMessageGui(playerId, "You can't play a character during the pianification phase\n" + getStateMessageGui());
+            getGame().setGameMessage(new ErrorMessage(getGame(), playerId));
             getGame().sendGame();
         } catch (EffectCannotBeActivatedException e) {
             setPlayerMessageCli(playerId, e.getMessage() + "\n" + getStateMessageCli());
             setPlayerMessageGui(playerId, e.getMessage() + "\n" + getStateMessageGui());
+            getGame().setGameMessage(new ErrorMessage(getGame(), playerId));
             getGame().sendGame();
         } catch (NotEnoughCoins e) {
             setPlayerMessageCli(playerId, "Not enougth coin to play the character\n" + getStateMessageCli());
             setPlayerMessageGui(playerId, "Not enougth coin to play the character\n" + getStateMessageGui());
+            getGame().setGameMessage(new ErrorMessage(getGame(), playerId));
             getGame().sendGame();
         }
     }
