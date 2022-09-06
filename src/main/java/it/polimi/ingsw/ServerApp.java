@@ -6,6 +6,10 @@ import java.io.IOException;
 
 public class ServerApp {
 
+    /**
+     * Main method used for launching the server who manages matches of Eriantys
+     * @param args input parameters
+     */
     public static void main( String[] args ) {
         Server server;
         try {

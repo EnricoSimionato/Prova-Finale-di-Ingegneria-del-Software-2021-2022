@@ -16,6 +16,10 @@ public class ClientApp {
     public static int port = 50000;
     private static String mode = "gui";
 
+    /**
+     * Main method used for launching the client needed for playing Eriantys
+     * @param args input parameters
+     */
     public static void main(String[] args) {
         DatagramSocket socket = null;
         try {
@@ -91,6 +95,10 @@ public class ClientApp {
         }
     }
 
+    /**
+     * Calculates the ip of the device which is running the client
+     * @return the ip address of the device from which the player is trying to connect to the server
+     */
     private static String calculateMyIp() {
         String ip = "";
         try {
@@ -112,6 +120,11 @@ public class ClientApp {
         return ip;
     }
 
+    /**
+     * Extracts the mode selection of the player ('gui' or 'cli') from the input string written on the command line
+     * @param arguments string written on the command line by who launched the client
+     * @return number of times the string ' -mode ' appear in the input string. -1 if the string next to ' -mode ' is different from gui and cli
+     */
     private static int obtainTheMode(String[] arguments) {
         int modeOccurrences = 0;
         for (int i = 0; i < arguments.length; i++) {
@@ -128,6 +141,11 @@ public class ClientApp {
         return modeOccurrences;
     }
 
+    /**
+     * Extracts the ip of the Eriantys server written by the player on the command line
+     * @param arguments string written on the command line by who launched the client
+     * @return number of times the string ' -ip ' appear in the input string
+     */
     private static int obtainIpAddress(String[] arguments) {
         int ipAddressOccurrences = 0;
         for (int i = 0; i < arguments.length; i++) {
@@ -139,6 +157,11 @@ public class ClientApp {
         return ipAddressOccurrences;
     }
 
+    /**
+     * Extracts the port of the Eriantys server written by the player on the command line
+     * @param arguments string written on the command line by who launched the client
+     * @return number of times the string ' -port ' appear in the input string
+     */
     private static int obtainPortNumber(String[] arguments) throws NumberFormatException {
         int portNumberOccurrences = 0;
         for (int i = 0; i < arguments.length; i++) {
@@ -151,4 +174,7 @@ public class ClientApp {
     }
 }
 
+/**
+ * Notifies that the string written on the command line for launching the client app has a wrong format and that for this reason the game cannot begin.
+ */
 class InvalidFormatException extends Exception { }
