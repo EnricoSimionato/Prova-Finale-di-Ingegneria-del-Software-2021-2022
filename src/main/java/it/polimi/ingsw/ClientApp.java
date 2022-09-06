@@ -9,18 +9,25 @@ import javafx.application.Application;
 import java.io.*;
 import java.net.*;
 import java.util.Enumeration;
-import java.util.Scanner;
 
 public class ClientApp {
 
-    public static String ip = "";
+    public static String ip = "127.0.0.1";
     public static int port = 50000;
+    private static String mode = "gui";
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         DatagramSocket socket = null;
         try {
-            if(args.length > 0 && args.length < 4) {
-                if (args.length == 1) {
+            if (args.length % 2 == 0 && args.length <= 6) {
+                int occurrences = obtainTheMode(args);
+                if (occurrences > 1 || occurrences < 0) throw new InvalidFormatException();
+                if (occurrences == 0) mode = "gui";
+                occurrences = 0;
+                occurrences = obtainIpAddress(args);
+                if (occurrences > 1) throw new InvalidFormatException();
+                if (occurrences == 1 && ip.equals("local")) ip = "127.0.0.1";
+                if (occurrences == 0) {
                     String myIp = calculateMyIp();
                     socket = new DatagramSocket();
                     socket.setBroadcast(true);
@@ -28,7 +35,6 @@ public class ClientApp {
                     ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
                     objectOutputStream.writeObject(new ConfigurationMessage(ConnectionSide.CLIENT, myIp, socket.getLocalPort()));
                     DatagramPacket packet = new DatagramPacket(byteArrayOutputStream.toByteArray(), byteArrayOutputStream.size(), InetAddress.getByName("255.255.255.255"), 40000);
-                    //System.out.println(InetAddress.getLocalHost().getHostAddress() + " " + byteArrayOutputStream.toByteArray().toString() + " " + String.valueOf(byteArrayOutputStream.size()) + " " + InetAddress.getByName("255.255.255.255") + " " + 40000);
                     socket.send(packet);
 
                     byte[] inputBuffer = new byte[1024];
@@ -46,14 +52,13 @@ public class ClientApp {
                     }
                     if (socket != null)
                         socket.close();
-                } else if (args.length == 2 || args.length == 3) {
-                    ip = args[1];
-                    if (args.length == 3) {
-                        port = Integer.valueOf(args[2]);
-                        System.out.println("The chosen port is the number " + port);
-                    }
                 }
-                if (args[0].equals("cli")) {
+                occurrences = 0;
+                occurrences = obtainPortNumber(args);
+                if (occurrences > 1) throw new InvalidFormatException();
+                if (occurrences == 0) port = 50000;
+
+                if (mode.equals("cli")) {
                     System.out.print("\033[H\033[2J");
                     System.out.flush();
                     ClientCli client = new ClientCli(ip, port);
@@ -62,16 +67,18 @@ public class ClientApp {
                     } catch (IOException e) {
                         System.out.println("The server is currently not running on the given address");
                     }
-                } else if (args[0].equals("gui")) {
+                } else if (mode.equals("gui")) {
                     Application.launch(GuiClient.class);
                 } else {
-                    System.out.println("The option is not valid. Input format : ./file.class MODE\nMODE : { CLI to play by command line - GUI to play by graphic user interface }");
+                    System.out.println("You are not sending the correct information. The format is: 'java -jar path_to_file/eriantys-client.jar [-mode (gui | cli)] [-ip (ip_address | local)] [-port port_number]'");
                 }
             } else {
-                System.out.println("You are not sending the correct information. The format is: 'java -jar path_to_file/eriantys-client.jar gui [ip_address [port_number]]' (instead of gui you can use 'cli')");
+                System.out.println("You are not sending the correct information. The format is: 'java -jar path_to_file/eriantys-client.jar [-mode (gui | cli)] [-ip (ip_address | local)] [-port port_number]'");
             }
+        } catch (InvalidFormatException e) {
+            System.out.println("You are not sending the correct information. The format is: 'java -jar path_to_file/eriantys-client.jar [-mode (gui | cli)] [-ip (ip_address | local)] [-port port_number]'");
         } catch (NumberFormatException e) {
-            System.out.println("You insert a wrong information. The default port is 50000");
+            System.out.println("You insert a wrong information. The port must be a number");
         } catch (SocketException e) {
             System.out.println("Some connection error occurs, retry later");
         } catch (IOException e) {
@@ -104,4 +111,44 @@ public class ClientApp {
         }
         return ip;
     }
+
+    private static int obtainTheMode(String[] arguments) {
+        int modeOccurrences = 0;
+        for (int i = 0; i < arguments.length; i++) {
+            if (arguments[i].equals("-mode")) {
+                if (arguments[i + 1].equals("gui") || arguments[i + 1].equals("cli")) {
+                    mode = arguments[i + 1];
+                    modeOccurrences++;
+                } else {
+                    modeOccurrences = -1;
+                    break;
+                }
+            }
+        }
+        return modeOccurrences;
+    }
+
+    private static int obtainIpAddress(String[] arguments) {
+        int ipAddressOccurrences = 0;
+        for (int i = 0; i < arguments.length; i++) {
+            if (arguments[i].equals("-ip")) {
+                ip = arguments[i + 1];
+                ipAddressOccurrences++;
+            }
+        }
+        return ipAddressOccurrences;
+    }
+
+    private static int obtainPortNumber(String[] arguments) throws NumberFormatException {
+        int portNumberOccurrences = 0;
+        for (int i = 0; i < arguments.length; i++) {
+            if (arguments[i].equals("-port")) {
+                port = Integer.valueOf(arguments[i + 1]);
+                portNumberOccurrences++;
+            }
+        }
+        return portNumberOccurrences;
+    }
 }
+
+class InvalidFormatException extends Exception { }
