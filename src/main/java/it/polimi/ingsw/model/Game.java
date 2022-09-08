@@ -14,7 +14,6 @@ public class Game extends Observable<Game> implements Serializable {
     private GameMode gameMode;
     private GameTable gameTable;
     private List<Assistant>[] assistants;
-    private List<Wizard> alreadyChosenWizards;
     private Player[] players;
     private Round round;
     private boolean victory;
@@ -37,8 +36,6 @@ public class Game extends Observable<Game> implements Serializable {
         this.numberOfPlayers = numberOfPlayers;
         gameMode = GameMode.NORMAL;
         gameTable = createGameTable(numberOfPlayers);
-
-        alreadyChosenWizards = new ArrayList<>();
 
         assistants = new ArrayList[numberOfPlayers];
         List<Assistant> assistantsList = createAssistants();
@@ -266,6 +263,7 @@ public class Game extends Observable<Game> implements Serializable {
         } catch (EmptyBagException e) {
             round = new Round(this);
         }
+        sendGame();
         return round;
     }
 

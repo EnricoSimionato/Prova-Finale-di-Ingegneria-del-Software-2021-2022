@@ -10,7 +10,7 @@ import java.util.List;
 
 public class GameMessage extends Message implements Serializable {
     private int state;
-    private int playerId;
+    private int receiverPlayerId;
     private int causingPlayerId;
     private String playerMessageCli;
     private String playerMessageGui;
@@ -32,18 +32,19 @@ public class GameMessage extends Message implements Serializable {
     private TowerColor winner;
 
     /**
-     * Creates a new generic message which has all the information to update the client state in face of a change of the modek
+     * Creates a new generic message which has all the information to update the client state in face of a change of the model
      * @param model entire game instance
      * @param causingPlayerId id of the player which causes the change of the model
+     * @param receiverPlayerId id of the player which will receive the message
      */
-    public GameMessage(Game model, int causingPlayerId) {
+    public GameMessage(Game model, int causingPlayerId, int receiverPlayerId) {
         state = model.getRound().getRoundState();
-        playerId = -1;
+        this.receiverPlayerId = receiverPlayerId;
         this.causingPlayerId = causingPlayerId;
-        playerMessageCli = model.getPlayer(playerId).getPlayerMessageCli();
-        playerMessageGui = model.getPlayer(playerId).getPlayerMessageGui();
+        playerMessageCli = model.getPlayer(receiverPlayerId).getPlayerMessageCli();
+        playerMessageGui = model.getPlayer(receiverPlayerId).getPlayerMessageGui();
         gametable = model.getGameTable();
-        assistants = model.getPlayerAssistant(playerId);
+        assistants = model.getPlayerAssistant(receiverPlayerId);
         playerOnTurn = model.getRound().getPlayerOnTurn();
         numberOfPLayers = model.getNumberOfPlayers();
         gameMode = model.getGameMode();
@@ -62,6 +63,40 @@ public class GameMessage extends Message implements Serializable {
         winner = model.getWinner();
     }
 
+    /**
+     * Creates a new generic message which has all the information to update the client state in face of a change of the modek
+     * @param model entire game instance
+     * @param causingPlayerId id of the player which causes the change of the model
+     */
+    public GameMessage(Game model, int causingPlayerId) {
+        state = model.getRound().getRoundState();
+        this.causingPlayerId = causingPlayerId;
+        gametable = model.getGameTable();
+
+        playerOnTurn = model.getRound().getPlayerOnTurn();
+        numberOfPLayers = model.getNumberOfPlayers();
+        gameMode = model.getGameMode();
+        alreadyPlayedCharacter = model.getRound().getAlreadyPLayedCharacter();
+        schoolBoards = model.getGameTable().getSchoolBoards();
+        if (gameMode == GameMode.EXPERT) {
+            characters = ((ExpertGame) model).getCharacters();
+            playersCoins = ((ExpertGame) model).getPlayersCoins();
+            tableCoins = ((ExpertGame) model).getCoinsOfTheTable();
+        } else characters = null;
+        playersNicknames = model.getPlayersNicknames();
+        playedAssistants = model.getRound().getPlayedAssistants();
+        postmanActive = (model.getRound() instanceof Postman) ? true : false;
+        victory = model.isVictory();
+        draw = model.isDraw();
+        winner = model.getWinner();
+    }
+
+    public void updateReceiver(Game model, int receiverId) {
+        receiverPlayerId = receiverId;
+        playerMessageCli = model.getPlayer(receiverPlayerId).getPlayerMessageCli();
+        playerMessageGui = model.getPlayer(receiverPlayerId).getPlayerMessageGui();
+        assistants = model.getPlayerAssistant(receiverPlayerId);
+    }
 
     public int getCausingPlayerId() {
         return causingPlayerId;
@@ -192,7 +227,7 @@ public class GameMessage extends Message implements Serializable {
      * @return
      */
     public int getPlayerId() {
-        return playerId;
+        return receiverPlayerId;
     }
 
     /**
@@ -224,7 +259,7 @@ public class GameMessage extends Message implements Serializable {
      * @param playerId
      */
     public void setPlayerId(int playerId) {
-        this.playerId = playerId;
+        this.receiverPlayerId = playerId;
     }
 
     /**
@@ -245,15 +280,15 @@ public class GameMessage extends Message implements Serializable {
         } else {
             printIslands(gametable.getIslands());
             printPlayedAssistants(getListPlayedAssistants());
-            if (playerId == playerOnTurn && state == 0) printAssistants(assistants);
+            if (receiverPlayerId == playerOnTurn && state == 0) printAssistants(assistants);
             if (gameMode == GameMode.EXPERT) {
                 printTableCoins();
                 printCharacter(characters);
             }
             printAllSchoolboards();
-            if (playerId == playerOnTurn && state != 0) printCloud(gametable.getClouds());
-            if (gameMode == GameMode.EXPERT && playerOnTurn == playerId && state != 0 && !alreadyPlayedCharacter) System.out.println("Use command 'character' to play a character");
-            if (playerId == playerOnTurn) System.out.println(playerMessageCli);
+            if (receiverPlayerId == playerOnTurn && state != 0) printCloud(gametable.getClouds());
+            if (gameMode == GameMode.EXPERT && playerOnTurn == receiverPlayerId && state != 0 && !alreadyPlayedCharacter) System.out.println("Use command 'character' to play a character");
+            if (receiverPlayerId == playerOnTurn) System.out.println(playerMessageCli);
             else System.out.println("You're not the player on turn... Wait for other player!");
         }
     }
@@ -637,7 +672,7 @@ public class GameMessage extends Message implements Serializable {
      * prints the winner's nicknames
      */
     public void printWinners() {
-        if (getWinnersIndexes().contains(playerId)) System.out.println("You WIN!!");
+        if (getWinnersIndexes().contains(receiverPlayerId)) System.out.println("You WIN!!");
         else {
             System.out.println("Winners: ");
             for (String s : getWinnersNicknames()) System.out.print(s + "\t");

@@ -15,7 +15,6 @@ public class Player implements Serializable {
     private String messageCli;
     private String messageGui;
     private boolean error;
-    private Wizard wizard;
 
     /**
      * Creates a new PLayer and saves the received nickName, his playerID and his list of Assistants
@@ -29,7 +28,6 @@ public class Player implements Serializable {
         this.assistants = new ArrayList<>();
         this.assistants.addAll(assistants);
         error = false;
-        wizard = null;
     }
 
     /**
@@ -45,14 +43,6 @@ public class Player implements Serializable {
      */
     public void setError(boolean error) {
         this.error = error;
-    }
-
-    public void setWizard(Wizard wizard){
-        this.wizard = wizard;
-    }
-
-    public Wizard getWizard(){
-        return this.wizard;
     }
 
     /**

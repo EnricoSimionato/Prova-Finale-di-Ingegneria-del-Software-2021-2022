@@ -162,15 +162,24 @@ public class Server {
                     Controller controller = new Controller(model);
 
                     match.setModel(model);
+                    System.out.println("Server-01");
 
                     for (int i = 0; i < match.getNumberOfPlayers(); i++) {
                         model.addObserver(playerView[i]);
+                        System.out.println("Server-02");
                         playerView[i].addObserver(controller);
-
-                        GameMessage displayedBoard = new GameMessage(model, i);
-                        match.getSockets().get(i).send(displayedBoard);
+                        System.out.println("Server-03");
+                        if (model != null) {
+                            GameMessage displayedBoard = new GameMessage(model, 0, i); /////////////////////////////da controllare
+                            System.out.println("Server-04");
+                            match.getSockets().get(i).send(displayedBoard);
+                        } else {
+                            System.out.println("eroooorrreeeee");
+                        }
+                        System.out.println("Server-05");
                     }
 
+                    System.out.println("Server-06");
                     System.out.println("The match " + match.getMatchId() + " starts");
                     System.out.println("The starting order of match " + match.getMatchId() + " is " + model.getRound().getPlayerOrder().toString());
 

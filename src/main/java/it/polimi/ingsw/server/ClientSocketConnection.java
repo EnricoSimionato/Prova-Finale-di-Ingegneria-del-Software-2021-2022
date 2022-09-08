@@ -30,13 +30,17 @@ public class ClientSocketConnection extends Observable<PlayerMessage> implements
     }
 
     /**
-     * Return the state of the connection
+     * Returns the state of the connection
      * @return true, if the socket is open, false, if the socket is closed
      */
     private synchronized boolean isActive(){
         return active;
     }
 
+    /**
+     *
+     * @param message
+     */
     public synchronized void send(Object message) {
         try {
             out.reset();
@@ -48,6 +52,10 @@ public class ClientSocketConnection extends Observable<PlayerMessage> implements
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized Object receive() {
         Object buffer = null;
@@ -61,6 +69,9 @@ public class ClientSocketConnection extends Observable<PlayerMessage> implements
         return buffer;
     }
 
+    /**
+     *
+     */
     public synchronized void closeConnectionNotifier() {
         try {
             socket.close();
@@ -70,6 +81,9 @@ public class ClientSocketConnection extends Observable<PlayerMessage> implements
         active = false;
     }
 
+    /**
+     *
+     */
     private void closeAndNotify() {
         closeConnectionNotifier();
         /////// eventuale controllo delle disconnessioni
@@ -78,6 +92,9 @@ public class ClientSocketConnection extends Observable<PlayerMessage> implements
 
     }
 
+    /**
+     *
+     */
     @Override
     public synchronized void closeConnection() {
         send(new TerminatorMessage("You have been disconnected. The match is over"));
@@ -99,6 +116,9 @@ public class ClientSocketConnection extends Observable<PlayerMessage> implements
         new Thread(() -> send(message)).start();
     }
 
+    /**
+     *
+     */
     @Override
     public void run() {
         try {

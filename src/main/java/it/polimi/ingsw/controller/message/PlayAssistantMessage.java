@@ -10,9 +10,9 @@ public class PlayAssistantMessage extends PlayerMessage implements Serializable 
     private int assistantPosition;
 
     /**
-     * message which permits playing an assistant
-     * @param playerId
-     * @param assistantPosition
+     * Creates a message which permits to play an assistant
+     * @param playerId identifier of the player which chooses the assistant
+     * @param assistantPosition position of the chosen assistant
      */
     public PlayAssistantMessage(int playerId, int assistantPosition) {
         super(playerId);
@@ -20,8 +20,8 @@ public class PlayAssistantMessage extends PlayerMessage implements Serializable 
     }
 
     /**
-     * calls the model method to play an assistant
-     * @param game
+     * Calls the model method for playing an assistant
+     * @param game instance of the current match
      */
     @Override
     public void performMove(Game game) {

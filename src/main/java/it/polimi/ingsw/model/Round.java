@@ -11,78 +11,14 @@ public class Round implements Serializable {
     private Game game;
     protected int roundState;
     private int previousState;
-    private int[] movesCounter;
-    private int indexOfPlayerOnTurn;
     private int[] playerOrder;
+    private int indexOfPlayerOnTurn;
+    private int[] movesCounter;
     private PlayedAssistant[] playedAssistants;
     private boolean[] alreadyPlayedAssistants;
     private List<Assistant> playedAssistantsPF;
     private boolean alreadyPlayedCharacter;
-    private boolean islandMessage = false;
-
-    public Round() { }
-
-    public Round(Game game) {
-        indexOfPlayerOnTurn = 0;
-        playerOrder = new int[game.getNumberOfPlayers()];
-        playerOrder[0] = calculateFirstPlayer(game.getNumberOfPlayers());
-        for (int i = 1; i < game.getNumberOfPlayers(); i++) playerOrder[i] = (playerOrder[i - 1] + 1) % game.getNumberOfPlayers();
-        roundState = 0;
-        previousState = 0;
-        movesCounter = new int[game.getNumberOfPlayers()];
-        for (int i = 0; i < game.getNumberOfPlayers(); i++)
-            movesCounter[i] = 0;
-        playedAssistants = new PlayedAssistant[game.getNumberOfPlayers()];
-        this.game = game;
-        alreadyPlayedCharacter = false;
-
-        alreadyPlayedAssistants = new boolean[game.getNumberOfPlayers()];
-        for (int i = 0; i < alreadyPlayedAssistants.length; i++)
-            alreadyPlayedAssistants[i] = false;
-        playedAssistantsPF = new ArrayList<>();
-
-
-        setMessageToAPlayerAndWaitingMessageForOthers(playerOrder[0], "Select an assistant", "Select an assistant");
-        getGame().setGameMessage(new GameMessage(getGame(), 0));//////////////////////////////////////
-    }
-
-    /**
-     * @return if the last move was about the island
-     */
-    public boolean isIslandMessage() {
-        return islandMessage;
-    }
-
-    /**
-     * @return the player on turn on this moment
-     */
-    public int getPlayerOnTurn() { return playerOrder[indexOfPlayerOnTurn]; }
-
-    /**
-     * Creates a new Round
-     * @param game
-     * @param playerOrder player order calculated by played Assistant
-     */
-    public Round(Game game, int[] playerOrder) {
-        this(game);
-        for(int i = 0; i < game.getNumberOfPlayers(); i++)
-            this.playerOrder[i] = playerOrder[i];
-        setMessageToAPlayerAndWaitingMessageForOthers(playerOrder[0], "Select an assistant", "Select an assistant");
-    }
-
-    /**
-     * Returns the instance of itself
-     * @return itself
-     */
-    public Round getRound() { return this; }
-
-    /**
-     * Returns the game of which the round is part
-     * @return the game of which the round is part
-     */
-    public Game getGame() {
-        return game;
-    }
+    private boolean islandMessage;
 
     public class PlayedAssistant implements Serializable {
         private int playerIndex;
@@ -99,6 +35,7 @@ public class Round implements Serializable {
         }
 
         /**
+         * Returns
          * @return player that had played the assistant
          */
         public int getPlayerIndex() {
@@ -106,7 +43,8 @@ public class Round implements Serializable {
         }
 
         /**
-         * @return assistant played
+         * Returns the chosen assistant
+         * @return chosen assistant
          */
         public Assistant getAssistant() {
             return assistant;
@@ -114,107 +52,45 @@ public class Round implements Serializable {
     }
 
     /**
-     * @return all the Assistant played until this moment
+     * Creates a new round with every attribute initialized to null
      */
-    public PlayedAssistant[] getPlayedAssistants(){
-        return  playedAssistants;
+    public Round() { }
+
+    /**
+     * Creates a new round which can be played
+     * @param game instance of the current match
+     */
+    public Round(Game game) {
+        this.game = game;
+        roundState = 0;
+        previousState = 0;
+
+        playerOrder = new int[game.getNumberOfPlayers()];
+        playerOrder[0] = calculateFirstPlayer(game.getNumberOfPlayers());
+        for (int i = 1; i < game.getNumberOfPlayers(); i++) playerOrder[i] = (playerOrder[i - 1] + 1) % game.getNumberOfPlayers();
+        indexOfPlayerOnTurn = 0;
+
+        movesCounter = new int[game.getNumberOfPlayers()];
+        for (int i = 0; i < game.getNumberOfPlayers(); i++)
+            movesCounter[i] = 0;
+
+        playedAssistants = new PlayedAssistant[game.getNumberOfPlayers()];
+        alreadyPlayedAssistants = new boolean[game.getNumberOfPlayers()];
+        for (int i = 0; i < alreadyPlayedAssistants.length; i++)
+            alreadyPlayedAssistants[i] = false;
+        playedAssistantsPF = new ArrayList<>();
+
+        alreadyPlayedCharacter = false;
+
+        islandMessage = false;
+
+        setMessageToAPlayerAndWaitingMessageForOthers(playerOrder[0], "Select an assistant", "Select an assistant");
     }
 
     /**
-     * @return player order on this turn
-     */
-    public int[] getPlayerOrder(){
-        return this.playerOrder.clone();
-    }
-
-    /**
-     * Controls if the player that want to make the move is the player on turn
-     * @param playerId of player that want to make the move
-     * @throws PlayerNotOnTurnException
-     */
-    public void checkPlayerOnTurn(int playerId) throws PlayerNotOnTurnException {
-        if(playerOrder[indexOfPlayerOnTurn] != playerId) {
-            setPlayerMessageCli(playerId, "You are not the current player");
-            game.sendGame();
-            throw new PlayerNotOnTurnException();
-        }
-    }
-
-    /**
-     * Set the new round state
-     * @param state
-     */
-    public void setRoundState(int state){
-        this.roundState = state;
-    }
-
-    /**
-     * @return the current round state
-     */
-    public int getRoundState(){
-        return roundState;
-    }
-
-    /**
-     * @return the previous round state
-     */
-    public int getPreviousState() {
-        return previousState;
-    }
-
-    /**
-     * Sets the new previous round state
-     * @param previousState
-     */
-    public void setPreviousState(int previousState) {
-        this.previousState = previousState;
-    }
-
-    /**
-     * Returns the number of move made until this specific moment
-     * @return
-     */
-    public int[] getMovesCounter(){
-        return movesCounter;
-    }
-
-    /**
-     * Sets the number of moves made by a specific player
-     * @param playerId
-     * @param moves
-     */
-    public void setMovesCounter(int playerId, int moves){
-        movesCounter[playerId] = moves;
-    }
-
-    /**
-     * @return player on turn
-     */
-    public int getIndexOfPlayerOnTurn(){
-        return indexOfPlayerOnTurn;
-    }
-
-    /**
-     * Sets the player on turn
-     * @param index
-     */
-    public void setIndexOfPlayerOnTurn(int index){
-        if(index>=0 && index<game.getNumberOfPlayers())
-            indexOfPlayerOnTurn=index;
-    }
-
-    /**
-     * Sets if the current player have already played a character
-     * @param alreadyPlayedCharacter
-     */
-    public void setAlreadyPlayedCharacter(boolean alreadyPlayedCharacter) {
-        this.alreadyPlayedCharacter = alreadyPlayedCharacter;
-    }
-
-    /**
-     * Calculates random the index of the first player for the first round
-     * @param numberOfPlayers
-     * @return
+     * Randomly calculates the index of the first player which has to play the round
+     * @param numberOfPlayers number of players playng the game
+     * @return index of the first player which has to play the round
      */
     public int calculateFirstPlayer(int numberOfPlayers){
         Random generator = new Random();
@@ -223,55 +99,189 @@ public class Round implements Serializable {
     }
 
     /**
-     * Controls if is it possible the specific move in this specific round state
-     * @param methodId
-     * @throws InvalidMethodException
+     * Creates a new round which can be played
+     * @param game instance of the current match
+     * @param playerOrder player order which comes from the last round
+     */
+    public Round(Game game, int[] playerOrder) {
+        this(game);
+        for(int i = 0; i < game.getNumberOfPlayers(); i++)
+            this.playerOrder[i] = playerOrder[i];
+        setMessageToAPlayerAndWaitingMessageForOthers(playerOrder[0], "Select an assistant", "Select an assistant");
+    }
+
+    /*-----------------------------------------------------------------------------------------\
+    |                                                                                          |
+    |                                   SETTER AND GETTER                                      |
+    |                                                                                          |
+    \-----------------------------------------------------------------------------------------*/
+
+    /**
+     * Returns the instance of the round itself
+     * @return the instance of the round itself
+     */
+    public Round getRound() { return this; }
+
+    /**
+     * Returns the game of which the round is part
+     * @return the game of which the round is part
+     */
+    public Game getGame() {
+        return game;
+    }
+
+    /**
+     * Returns the current round state
+     * @return the current round state
+     */
+    public int getRoundState(){
+        return roundState;
+    }
+
+    /**
+     * Sets the new round state
+     * @param state new round state
+     */
+    public void setRoundState(int state){
+        this.roundState = state;
+    }
+
+    /**
+     * Returns the previous round state
+     * @return the previous round state
+     */
+    public int getPreviousState() {
+        return previousState;
+    }
+
+    /**
+     * Sets the previous state of the round
+     * @param previousState previous state of the round
+     */
+    public void setPreviousState(int previousState) {
+        this.previousState = previousState;
+    }
+
+    /**
+     * Returns the order of playing which has to be followed by the players in this turn
+     * @return order of playing of this turn
+     */
+    public int[] getPlayerOrder(){
+        return this.playerOrder.clone();
+    }
+
+    /**
+     * Returns the index in the playing order of the player on turn
+     * @return the index in the playing order of the player on turn
+     */
+    public int getIndexOfPlayerOnTurn() {
+        return indexOfPlayerOnTurn;
+    }
+
+    /**
+     * Sets the index in the playing order of the player on turn
+     * @param index index in the playing order of the player on turn
+     */
+    public void setIndexOfPlayerOnTurn(int index) {
+        if(index >= 0 && index < game.getNumberOfPlayers())
+            indexOfPlayerOnTurn = index;
+    }
+
+    /**
+     * Returns an array containing the number of students moved by every player in this round
+     * @return an array containing the number of students moved by every player in this round
+     */
+    public int[] getMovesCounter() {
+        return movesCounter;
+    }
+
+    /**
+     * Sets the number of students moved by the player in this round
+     * @param playerId identifier of the player whose moves has to be set
+     * @param moves number of students moved by the player with the given identifier
+     */
+    public void setMovesCounter(int playerId, int moves) {
+        movesCounter[playerId] = moves;
+    }
+
+    /**
+     * Returns all the assistants played until this moment
+     * @return all the assistants played until this moment
+     */
+    public PlayedAssistant[] getPlayedAssistants(){
+        return playedAssistants;
+    }
+
+    /**
+     * Sets the attribute which says whether the player on turn has played tan character card or not
+     * @param alreadyPlayedCharacter true if the character has been played, false otherwise
+     */
+    public void setAlreadyPlayedCharacter(boolean alreadyPlayedCharacter) {
+        this.alreadyPlayedCharacter = alreadyPlayedCharacter;
+    }
+
+    /**
+     * Returns true if the last message moves a student from a schoolboard to an island, false otherwise
+     * @return true if the last message moves a student from a schoolboard to an island
+     */
+    public boolean isIslandMessage() {
+        return islandMessage;
+    }
+
+    /**
+     * Returns the identifier of the player on turn at this moment
+     * @return the identifier of the player on turn at this moment
+     */
+    public int getPlayerOnTurn() { return playerOrder[indexOfPlayerOnTurn]; }
+
+    /*-----------------------------------------------------------------------------------------\
+    |                                                                                          |
+    |                       METHODS FOR CHECKING THE ALLOWANCE OF THE MOVE                     |
+    |                                                                                          |
+    \-----------------------------------------------------------------------------------------*/
+
+    /**
+     * Checks if the player who wants to make the move is the player on turn
+     * @param playerId identifier of player that want to make the move
+     * @throws PlayerNotOnTurnException if the player who tries to play is not the player who has to move
+     */
+    public void checkPlayerOnTurn(int playerId) throws PlayerNotOnTurnException {
+        if(playerOrder[indexOfPlayerOnTurn] != playerId) {
+            setPlayerMessageCli(playerId, "You are not the current player");
+            setPlayerMessageGui(playerId, "You are not the current player");
+            /* It may be interesting to add a way for notifying only the player who made the bad move */
+            game.sendGame();
+            throw new PlayerNotOnTurnException();
+        }
+    }
+
+    /**
+     * Checks if it is possible to do the specific move inside the current round state
+     * @param methodId identifier of the method which has been called from the message sent by the player
+     * @throws InvalidMethodException if the method cannot be executed inside the current round state
      */
     public void checkStatusAndMethod(int methodId) throws InvalidMethodException {
         if (methodId != roundState) throw new InvalidMethodException();
     }
 
     /**
-     * Controls if the player has already made all the possible moves
-     * @param playerId
-     * @throws TooManyMovesException
+     * Checks if the player has already made all the possible movements of students from the entrance
+     * @param playerId identifier of the player for which is asked the check
+     * @throws TooManyMovesException if the player has done 3 or more movements of students (4 or more if the match is played by 3 players)
      */
     public void checkNumberOfMoves(int playerId) throws TooManyMovesException {
         if((movesCounter[playerId] > 3 && game.getNumberOfPlayers() != 3) || (movesCounter[playerId] > 4 && game.getNumberOfPlayers() == 3)) throw new TooManyMovesException();
     }
 
-    /**
-     * Sets the new player message for CLI
-     * @param playerId
-     * @param message
-     */
-    public void setPlayerMessageCli(int playerId, String message) {
-        game.getPlayer(playerId).setPlayerMessageCli(message);
-    }
+    /*-----------------------------------------------------------------------------------------\
+    |                                                                                          |
+    |    METHODS FOR CREATING AND SETTING THE MESSAGES WHICH HAS TO BE SHOWN TO THE CLIENTS    |
+    |                                                                                          |
+    \-----------------------------------------------------------------------------------------*/
 
     /**
-     * Sets the new player message for GUI
-     * @param playerId
-     * @param message
-     */
-    public void setPlayerMessageGui(int playerId, String message) {
-        game.getPlayer(playerId).setPlayerMessageGui(message);
-    }
-
-
-    public void setMessageToAPlayerAndWaitingMessageForOthers(int playerId, String messageCli, String messageGui) {
-        setPlayerMessageCli(playerId, messageCli);
-        setPlayerMessageGui(playerId, messageGui);
-        for (int i = 0; i < game.getNumberOfPlayers(); i++) {
-            if (i != playerId) {
-                setPlayerMessageCli(i, "The player on turn is " + game.getPlayer(playerId).getNickname());
-                setPlayerMessageGui(i, "The player on turn is " + game.getPlayer(playerId).getNickname());
-            }
-        }
-    }
-
-    /**
-     * @return the CLI message for the current round state
+     * Creates a specific command line message on the base of the round state
+     * @return the command line message related to the current round state
      */
     public String getStateMessageCli() {
         String message = null;
@@ -279,11 +289,13 @@ public class Round implements Serializable {
         else if (roundState == 1) message = "Make your move:\n1 : Move a student from entrance to table\n2 : Move a student from entrance to an island";
         else if (roundState == 2) message = "Mother nature position: " + game.getGameTable().getMotherNaturePosition() + "\nSelect an island where mother nature has to move: ";
         else if (roundState == 3) message = "Select a cloud";
+        // Maybe some more messages can be added for other states
         return message;
     }
 
     /**
-     * @return the GUI message for the current round state
+     * Creates a specific message on the base of the round state for the graphic use interface
+     * @return the message related to the current round state the graphic use interface
      */
     public String getStateMessageGui() {
         String message = null;
@@ -291,21 +303,76 @@ public class Round implements Serializable {
         else if (roundState == 1) message = "Move a student from entrance to table or from entrance to an island";
         else if (roundState == 2) message = "Select an island where mother nature has to move";
         else if (roundState == 3) message = "Select a cloud";
+        // Maybe some more messages can be added for other states
         return message;
     }
 
     /**
-     * @return if the pianification phase is ended
+     * Sets the new player message which will be shown on the command line
+     * @param playerId identifier of the player who will read the message
+     * @param message message which will be shown on the command line
+     */
+    public void setPlayerMessageCli(int playerId, String message) {
+        game.getPlayer(playerId).setPlayerMessageCli(message);
+    }
+
+    /**
+     * Sets the new player message which will be shown on the graphic user interface
+     * @param playerId identifier of the player who will read the message
+     * @param message message which will be shown on the graphic user interface
+     */
+    public void setPlayerMessageGui(int playerId, String message) {
+        game.getPlayer(playerId).setPlayerMessageGui(message);
+    }
+
+    /**
+     * Sets the message which has to be sent to the players.
+     * Sets a specific message for the player under interest and sets a different message for the opponents
+     * @param playerId identifier of the player who will read a different message from the others
+     * @param singlePlayerCliMessage message which will be shown on the command line of the player with the given playerId
+     * @param singlePlayerGuiMessage message which will be shown on the graphic user interface of the player with the given playerId
+     * @param otherPlayersCliMessage message which will be shown on the command line of the other players
+     * @param otherPlayersGuiMessage message which will be shown on the graphic user interface of the other players
+     */
+    public void setDifferentMessagesToPlayers(int playerId, String singlePlayerCliMessage, String singlePlayerGuiMessage, String otherPlayersCliMessage, String otherPlayersGuiMessage) {
+        setPlayerMessageCli(playerId, singlePlayerCliMessage);
+        setPlayerMessageGui(playerId, singlePlayerGuiMessage);
+        for (int i = 0; (i < game.getNumberOfPlayers()) && i != playerId; i++) {
+            setPlayerMessageCli(i, otherPlayersCliMessage);
+            setPlayerMessageGui(i, otherPlayersGuiMessage);
+        }
+    }
+
+    /**
+     * Sets the message which has to be sent to the players.
+     * Sets a specific message for the player which has to play and sets a message which imposes to wait for the opponents
+     * @param playerId identifier of the player who will read the message
+     * @param messageCli message which will be shown on the command line
+     * @param messageGui message which will be shown on the graphic user interface
+     */
+    public void setMessageToAPlayerAndWaitingMessageForOthers(int playerId, String messageCli, String messageGui) {
+        setDifferentMessagesToPlayers(playerId, messageCli, messageGui, "The player on turn is " + game.getPlayer(playerId).getNickname(), "The player on turn is " + game.getPlayer(playerId).getNickname());
+    }
+
+    /*-----------------------------------------------------------------------------------------\
+    |                                                                                          |
+    |                 METHODS FOR IDENTIFYING THE DIFFERENT PHASES OF A ROUND                  |
+    |                                                                                          |
+    \-----------------------------------------------------------------------------------------*/
+
+    /**
+     * Returns whether the pianification phase is ended or not
+     * @return true, if the pianification phase is ended; false, otherwise
      */
     public boolean isPianificationPhaseEnded() {
-        if (roundState == 0) {
+        if (roundState == 0)
             if (indexOfPlayerOnTurn == game.getNumberOfPlayers() - 1) return true;
-        }
         return false;
     }
 
     /**
-     * @return true if the action phase is ended, false otherwise
+     * Returns whether the action phase is ended or not
+     * @return true, if the action phase is ended; false, otherwise
      */
     public boolean isActionPhaseEnded() {
         if (roundState == 3 && (indexOfPlayerOnTurn == game.getNumberOfPlayers() - 1)) return true;
@@ -313,7 +380,8 @@ public class Round implements Serializable {
     }
 
     /**
-     * @return true if you can move another student from entrance, false otherwise
+     * Returns whether it is time to move another student or not
+     * @return true, if it is time to move another student; false, otherwise
      */
     public boolean isTimeToChooseTheNextStudent() {
         if((roundState == 1 && movesCounter[playerOrder[indexOfPlayerOnTurn]] < 3 && game.getNumberOfPlayers() != 3) || (roundState == 1 && movesCounter[playerOrder[indexOfPlayerOnTurn]] < 4 && game.getNumberOfPlayers() == 3))
@@ -322,17 +390,18 @@ public class Round implements Serializable {
     }
 
     /**
-     * @return true if you have to move mother nature, false otherwise
+     * Returns whether it is time to move mother nature or not
+     * @return true, if it is time to move mother nature; false, otherwise
      */
     public boolean isTimeToMoveMotherNature() {
         if ((roundState == 1 && 3 <= movesCounter[playerOrder[indexOfPlayerOnTurn]] && game.getNumberOfPlayers() != 3) || (roundState == 1 && 4 <= movesCounter[playerOrder[indexOfPlayerOnTurn]] && game.getNumberOfPlayers() == 3))
             return true;
-
         return false;
     }
 
     /**
-     * @return true if you can choose a cloud, false otherwise
+     * Returns whether it is time to choose a cloud or not
+     * @return true, if it is time to choose a cloud; false, otherwise
      */
     public boolean isTimeToChooseACloud() {
         if (roundState == 2) return true;
@@ -462,13 +531,13 @@ public class Round implements Serializable {
     }
 
     /**
-     * Removes an assistant from a specific player
-     * @param playerId
-     * @param assistantPosition
-     * @throws InvalidIndexException
+     * Removes an assistant from a specific player because he choose to play that assistant
+     * @param playerId identifier of the player who makes the move
+     * @param assistantId identifier of the chosen assistant
+     * @throws InvalidIndexException if the chosen assistant cannot be played because someone else already played it
      */
-    public void removeAssistant(int playerId, int assistantPosition) throws InvalidIndexException {
-        Assistant assistantToPlay = game.getPlayer(playerId).getAssistant(assistantPosition);
+    public void removeAssistant(int playerId, int assistantId) throws InvalidIndexException {
+        Assistant assistantToPlay = game.getPlayer(playerId).getAssistant(assistantId);
 
         for (int i = 0; i < playedAssistants.length; i++) {
             if (alreadyPlayedAssistants[i] && i != playerId) {
@@ -477,9 +546,9 @@ public class Round implements Serializable {
                 }
             }
         }
-        game.getPlayer(playerId).setPlayerMessageCli("Assistant played");
-        game.getPlayer(playerId).setPlayerMessageGui("Assistant played");
-        assistantToPlay = game.getPlayer(playerId).removeAssistant(assistantPosition);
+        getGame().getPlayer(playerId).setPlayerMessageCli("Assistant played");
+        getGame().getPlayer(playerId).setPlayerMessageGui("Assistant played");
+        assistantToPlay = game.getPlayer(playerId).removeAssistant(assistantId);
         playedAssistants[playerId] = new PlayedAssistant(playerId, assistantToPlay);
         alreadyPlayedAssistants[playerId] = true;
         playedAssistantsPF.add(assistantToPlay);
@@ -488,13 +557,13 @@ public class Round implements Serializable {
     /**
      * PLays the selected assistant and control if is it possible. Otherwise, it returns an error message
      * @param playerId
-     * @param idAssistant
+     * @param assistantId
      */
-    public void playAssistant(int playerId, int idAssistant) {
+    public void playAssistant(int playerId, int assistantId) {
         try {
             checkPlayerOnTurn(playerId);
             checkStatusAndMethod(0);
-            removeAssistant(playerId, idAssistant);
+            removeAssistant(playerId, assistantId);
             getGame().setGameMessage(new AssistantPlayedMessage(getGame(), playerId));
             calculateNextPlayer();
         } catch (PlayerNotOnTurnException e) {

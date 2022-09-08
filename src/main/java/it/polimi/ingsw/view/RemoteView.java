@@ -31,7 +31,8 @@ public class RemoteView extends View {
     @Override
     public void update(Game model) {
         GameMessage message = model.getGameMessage();
-        message.setPlayerId(super.getPlayerId());
+        message.updateReceiver(model, super.getPlayerId());
+        //message.setPlayerId(super.getPlayerId());
         /*
         if (model.getPlayer(super.getPlayerId()).isError()) {
             message = new ErrorMessage(model, super.getPlayerId());
