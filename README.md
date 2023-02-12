@@ -115,6 +115,6 @@ E' importante che la porta 40000 non sia occupata lato server, nel caso in cui s
 
 ---
 
-- Michael Vitali 10730463
-- Manuel Tacca 10707009
-- Enrico Simionato 10698193
+- Michael Vitali
+- Manuel Tacca
+- Enrico Simionato
